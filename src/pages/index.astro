@@ -1,858 +1,426 @@
 ---
 ---
 <!doctype html>
-<html lang="pt-BR" class="scroll-smooth" data-theme="dark">
+<html lang="en" class="scroll-smooth dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Local AI Assistant — IA local para Windows</title>
-  <meta name="description" content="Assistente de IA local com acesso ao filesystem, terminal e web. Claude, OpenAI e Ollama." />
+  <title>Luminous - Social Reach Automated</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    /* ── Tokens ── */
     :root {
-      --bg:           #050505;
-      --bg-card:      rgba(18,18,18,0.6);
-      --bg-header:    rgba(5,5,5,0.8);
-      --bg-dl:        #0a0a0a;
-      --text-1:       #f9fafb;
-      --text-2:       #9ca3af;
-      --text-3:       #6b7280;
-      --text-4:       #4b5563;
-      --border:       rgba(255,255,255,0.07);
-      --border-soft:  rgba(255,255,255,0.05);
-      --grid-color:   rgba(255,255,255,0.03);
-      --accent:       #10b981;
-      --accent-hover: #059669;
-      --accent-r:     16; --accent-g: 185; --accent-b: 129;
-      --accent-dim:   rgba(16,185,129,0.12);
-      --accent-ring:  rgba(16,185,129,0.25);
-      --accent-text:  #6ee7b7;
-      --accent-muted: #34d399;
-      --orb1:         rgba(5,150,105,0.15);
-      --orb2:         rgba(52,211,153,0.1);
-      --orb3:         rgba(16,185,129,0.08);
-      --glow:         rgba(16,185,129,0.12);
-      --glow-strong:  rgba(16,185,129,0.06);
-      --scroll-thumb: #262626;
-      --stars-op:     0.25;
-      --marquee-text: #4b5563;
-      --req-text:     #9ca3af;
-      --toggle-bg:    rgba(255,255,255,0.06);
-      --toggle-border:rgba(255,255,255,0.1);
-      --toggle-icon:  #9ca3af;
+      --bg: #030303;
     }
-
-    html[data-theme="light"] {
-      --bg:           #f8fafc;
-      --bg-card:      rgba(255,255,255,0.9);
-      --bg-header:    rgba(248,250,252,0.9);
-      --bg-dl:        #ffffff;
-      --text-1:       #0f172a;
-      --text-2:       #475569;
-      --text-3:       #64748b;
-      --text-4:       #94a3b8;
-      --border:       rgba(0,0,0,0.07);
-      --border-soft:  rgba(0,0,0,0.05);
-      --grid-color:   rgba(0,0,0,0.04);
-      --accent:       #059669;
-      --accent-hover: #047857;
-      --accent-r:     5; --accent-g: 150; --accent-b: 105;
-      --accent-dim:   rgba(5,150,105,0.08);
-      --accent-ring:  rgba(5,150,105,0.2);
-      --accent-text:  #065f46;
-      --accent-muted: #059669;
-      --orb1:         rgba(5,150,105,0.07);
-      --orb2:         rgba(52,211,153,0.05);
-      --orb3:         rgba(16,185,129,0.04);
-      --glow:         rgba(5,150,105,0.08);
-      --glow-strong:  rgba(5,150,105,0.04);
-      --scroll-thumb: #cbd5e1;
-      --stars-op:     0;
-      --marquee-text: #94a3b8;
-      --req-text:     #64748b;
-      --toggle-bg:    rgba(0,0,0,0.04);
-      --toggle-border:rgba(0,0,0,0.1);
-      --toggle-icon:  #64748b;
-    }
-
-    /* ── Reset ── */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background-color: var(--bg);
-      color: var(--text-1);
+      color: white;
       overflow-x: hidden;
-      transition: background-color 0.35s ease, color 0.35s ease;
     }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 4px; }
 
-    /* ── Grid ── */
+    /* Subtle grid background */
     .grid-bg {
       background-image:
-        linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
       background-size: 40px 40px;
-      transition: background-image 0.35s ease;
     }
 
-    /* ── Stars ── */
+    /* Stars background */
     .stars {
       background-image:
-        radial-gradient(1px 1px at 15px 25px, #fff, transparent),
-        radial-gradient(1px 1px at 80px 60px, #fff, transparent),
-        radial-gradient(1.5px 1.5px at 200px 40px, #fff, transparent),
-        radial-gradient(1px 1px at 320px 90px, #fff, transparent),
-        radial-gradient(1px 1px at 450px 20px, #fff, transparent),
-        radial-gradient(1.5px 1.5px at 550px 70px, #fff, transparent),
-        radial-gradient(1px 1px at 700px 30px, #fff, transparent),
-        radial-gradient(1px 1px at 820px 80px, #fff, transparent),
-        radial-gradient(1px 1px at 950px 45px, #fff, transparent),
-        radial-gradient(1.5px 1.5px at 1100px 25px, #fff, transparent),
-        radial-gradient(1px 1px at 1250px 60px, #fff, transparent),
-        radial-gradient(1px 1px at 1380px 35px, #fff, transparent);
-      background-size: 1440px 120px;
-      opacity: var(--stars-op);
-      transition: opacity 0.35s ease;
+        radial-gradient(1px 1px at 15px 25px, rgba(255,255,255,0.4), transparent),
+        radial-gradient(1px 1px at 80px 250px, rgba(255,255,255,0.2), transparent),
+        radial-gradient(1.5px 1.5px at 200px 80px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 320px 300px, rgba(255,255,255,0.2), transparent),
+        radial-gradient(1px 1px at 450px 120px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1.5px 1.5px at 550px 350px, rgba(255,255,255,0.3), transparent),
+        radial-gradient(1px 1px at 700px 90px, rgba(255,255,255,0.4), transparent),
+        radial-gradient(1px 1px at 820px 200px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 950px 50px, rgba(255,255,255,0.2), transparent),
+        radial-gradient(1.5px 1.5px at 1100px 420px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 1250px 180px, rgba(255,255,255,0.4), transparent),
+        radial-gradient(1px 1px at 1380px 80px, rgba(255,255,255,0.3), transparent);
+      background-size: 1440px 500px;
+      background-repeat: repeat;
+      opacity: 0.5;
     }
 
-    /* ── Char reveal ── */
-    .char {
-      display: inline-block;
-      opacity: 0;
-      transform: translateY(110%);
-      clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .char.revealed {
-      opacity: 1;
-      transform: translateY(0);
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-    }
-
-    /* ── Scroll fade-in ── */
-    .fade-up {
-      opacity: 0;
-      filter: blur(8px);
-      transform: translateY(24px);
-      transition:
-        opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-        filter 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-        transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .fade-up.visible { opacity: 1; filter: blur(0); transform: translateY(0); }
-
-    /* ── Orbs ── */
-    .orb {
+    /* Center light beam & distortion */
+    .center-beam {
       position: absolute;
-      border-radius: 9999px;
-      filter: blur(80px);
-      pointer-events: none;
-      transition: background 0.35s ease;
+      left: 50%;
+      top: -20%;
+      height: 140%;
+      width: 2px;
+      transform: translateX(-50%);
+      background: #fff;
+      box-shadow: 
+        0 0 100px 20px #ffae00,
+        0 0 200px 60px #ff5100,
+        0 0 300px 120px rgba(255, 68, 0, 0.4);
+      border-radius: 100%;
+      z-index: 0;
     }
 
-    /* ── Flashlight card ── */
-    .flash-card {
-      position: relative;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      backdrop-filter: blur(8px);
-      transition: border-color 0.3s, transform 0.3s, background 0.35s;
-    }
-    .flash-card::before {
-      content: "";
+    /* Noise/Textured overlay on the beam for that "particle/dust" feel */
+    .beam-dust {
       position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: radial-gradient(500px circle at var(--mx,50%) var(--my,50%), rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.1), transparent 50%);
-      opacity: 0;
-      transition: opacity 0.4s;
+      left: 45%;
+      top: 0;
+      width: 10%;
+      height: 100%;
+      background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.3" /%3E%3C/svg%3E');
+      mix-blend-mode: color-dodge;
+      opacity: 0.6;
+      border-radius: 100%;
+      mask-image: radial-gradient(ellipse at center, black 10%, transparent 60%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 10%, transparent 60%);
       pointer-events: none;
       z-index: 1;
     }
-    .flash-card::after {
-      content: "";
+
+    .bottom-flare {
       position: absolute;
-      inset: -1px;
-      border-radius: inherit;
-      background: radial-gradient(400px circle at var(--mx,50%) var(--my,50%), rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.2), transparent 50%);
-      opacity: 0;
-      transition: opacity 0.4s;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80vw;
+      height: 30vh;
+      background: radial-gradient(ellipse at bottom, rgba(255, 230, 0, 0.8) 0%, rgba(255, 50, 0, 0.4) 30%, transparent 70%);
+      z-index: 1;
+      filter: blur(40px);
       pointer-events: none;
-      z-index: 0;
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      padding: 1px;
-    }
-    .flash-card:hover::before,
-    .flash-card:hover::after { opacity: 1; }
-    .flash-card:hover { transform: translateY(-2px); }
-    .flash-card > * { position: relative; z-index: 2; }
-
-    /* ── Border beam button ── */
-    .btn-beam {
-      position: relative;
-      overflow: hidden;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 14px 28px;
-      background: var(--accent);
-      color: #fff;
-      font-weight: 600;
-      font-size: 14px;
-      border-radius: 12px;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: background 0.2s;
-      width: 100%;
-    }
-    .btn-beam:hover { background: var(--accent-hover); }
-    .btn-beam .beam {
-      position: absolute;
-      inset: -2px;
-      border-radius: inherit;
-      background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,255,255,0.5) 60deg, transparent 120deg);
-      animation: rotate-beam 2.5s linear infinite;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.3s;
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      padding: 2px;
-    }
-    .btn-beam:hover .beam { opacity: 1; }
-    @keyframes rotate-beam { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-    /* ── Ghost button ── */
-    .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      background: var(--toggle-bg);
-      border: 1px solid var(--toggle-border);
-      color: var(--text-2);
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: 12px;
-      text-decoration: none;
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
-    }
-    .btn-ghost:hover {
-      background: rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.08);
-      border-color: var(--accent-ring);
-      color: var(--text-1);
     }
 
-    /* ── Toggle ── */
-    .theme-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 9px;
-      background: var(--toggle-bg);
-      border: 1px solid var(--toggle-border);
-      color: var(--toggle-icon);
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
-      flex-shrink: 0;
+    .card-border-gradient {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.4s ease;
     }
-    .theme-toggle:hover {
-      background: var(--accent-dim);
-      border-color: var(--accent-ring);
-      color: var(--accent);
+    
+    .card-border-gradient:hover {
+      border-color: rgba(255, 136, 0, 0.4);
+      box-shadow: 0 0 40px rgba(255, 110, 0, 0.2);
     }
-    .icon-sun  { display: none; }
-    .icon-moon { display: block; }
-    html[data-theme="light"] .icon-sun  { display: block; }
-    html[data-theme="light"] .icon-moon { display: none; }
-
-    /* ── Marquee ── */
-    @keyframes marquee-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-    .marquee-track { animation: marquee-left 30s linear infinite; }
-    .marquee-mask {
-      mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
-      -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+    
+    /* Chart Gradient */
+    .chart-fill {
+      fill: url(#orangeGradient);
     }
 
-    /* ── Misc ── */
-    .parallax-slow { will-change: transform; }
-    .parallax-med  { will-change: transform; }
-    .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
+    /* Buttons */
+    .btn-gradient-explore {
+      background: linear-gradient(90deg, #ffc56e 0%, #ff9d2a 50%, #f77c15 100%);
+      box-shadow: 0 0 30px rgba(255, 136, 0, 0.3);
+      transition: all 0.3s ease;
     }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
-      border-radius: 9999px;
-      background: var(--accent-dim);
-      border: 1px solid var(--accent-ring);
-      color: var(--accent-text);
-      font-size: 12px;
-      font-weight: 500;
-      transition: background 0.35s, border-color 0.35s, color 0.35s;
+    .btn-gradient-explore:hover {
+      box-shadow: 0 0 40px rgba(255, 136, 0, 0.5);
+      filter: brightness(1.1);
     }
-    .badge-dot {
-      width: 6px; height: 6px;
-      border-radius: 9999px;
-      background: var(--accent-muted);
-      animation: pulse-dot 2s ease-in-out infinite;
+    
+    .btn-gradient-analyze {
+      background: linear-gradient(90deg, #ed7c27 0%, #d6550b 100%);
+      transition: all 0.3s ease;
     }
-    @keyframes pulse-dot {
-      0%,100% { opacity:1; transform:scale(1); }
-      50%      { opacity:0.5; transform:scale(0.8); }
+    .btn-gradient-analyze:hover {
+      filter: brightness(1.15);
+      box-shadow: 0 0 20px rgba(237, 124, 39, 0.4);
+    }
+
+    /* Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .float-anim {
+      animation: float 8s ease-in-out infinite;
     }
   </style>
 </head>
-<body>
+<body class="antialiased">
 
-<!-- HEADER -->
-<header style="position:fixed;top:0;left:0;right:0;z-index:50;background:var(--bg-header);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-soft);transition:background 0.35s,border-color 0.35s;">
-  <div style="max-width:1100px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <span style="font-size:22px;">🤖</span>
-      <span style="font-size:14px;font-weight:600;color:var(--text-1);letter-spacing:-0.02em;transition:color 0.35s;">Local AI Assistant</span>
-    </div>
-    <nav style="display:flex;align-items:center;gap:20px;">
-      <a href="#features" style="font-size:13px;color:var(--text-3);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-3)'">Funcionalidades</a>
-      <a href="#download" style="font-size:13px;color:var(--text-3);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-3)'">Download</a>
-      <a href="https://github.com/pierre-santos013/iac" target="_blank" rel="noopener noreferrer" style="font-size:13px;color:var(--text-3);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-3)'">
-        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-        GitHub
-      </a>
-      <!-- TOGGLE -->
-      <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema">
-        <!-- Moon (dark mode ativo) -->
-        <svg class="icon-moon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-        <!-- Sun (light mode ativo) -->
-        <svg class="icon-sun" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      </button>
-    </nav>
-  </div>
-</header>
-
-<!-- HERO -->
-<section style="position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;padding-top:60px;">
-  <div class="grid-bg" style="position:absolute;inset:0;"></div>
-  <div class="stars" style="position:absolute;inset:0;"></div>
-  <div class="orb parallax-slow" style="width:500px;height:500px;background:var(--orb1);top:-100px;left:-150px;"></div>
-  <div class="orb parallax-med"  style="width:350px;height:350px;background:var(--orb2);bottom:-50px;right:-100px;"></div>
-  <div class="orb" style="width:200px;height:200px;background:var(--orb3);top:40%;left:60%;"></div>
-  <!-- Data flow cascade -->
-  <canvas id="data-flow" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;"></canvas>
-
-  <div style="position:relative;z-index:10;text-align:center;max-width:860px;padding:0 24px;">
-    <div class="badge fade-up" style="margin-bottom:28px;">
-      <span class="badge-dot"></span>
-      Gratuito &middot; Open source &middot; Windows
+  <main class="relative min-h-screen flex items-center overflow-hidden pt-20 pb-20 md:pt-0 md:pb-0">
+    
+    <!-- Background Elements -->
+    <div class="fixed inset-0 grid-bg z-[-3]"></div>
+    <div class="fixed inset-0 stars z-[-2]"></div>
+    
+    <!-- Core Visual Effect -->
+    <div class="absolute inset-0 flex justify-center z-[-1] overflow-hidden">
+      <div class="center-beam"></div>
+      <div class="beam-dust"></div>
+      <div class="bottom-flare"></div>
+      <canvas id="plasma-sparks" class="absolute inset-0 w-full h-full pointer-events-none z-10 mix-blend-screen"></canvas>
     </div>
 
-    <h1 style="font-size:clamp(42px,6vw,80px);font-weight:800;line-height:1.05;letter-spacing:-0.04em;color:var(--text-1);margin-bottom:24px;">
-      <span id="hero-line1" style="display:block;overflow:hidden;transition:color 0.35s;">Um assistente de IA</span>
-      <span id="hero-line2" style="display:block;overflow:hidden;background:linear-gradient(135deg,#6ee7b7,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">que roda na sua máquina</span>
-    </h1>
-
-    <p class="fade-up" style="font-size:18px;color:var(--text-2);max-width:560px;margin:0 auto 40px;line-height:1.7;transition-delay:0.3s;transition:color 0.35s;">
-      Acesse arquivos, execute comandos no terminal e pesquise na web — tudo por linguagem natural. Compatível com Claude, OpenAI e Ollama.
-    </p>
-
-    <div class="fade-up" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;transition-delay:0.45s;">
-      <a id="hero-download-btn" href="#download" class="btn-beam" style="width:auto;">
-        <span class="beam"></span>
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-        Baixar para Windows
-      </a>
-      <a href="https://github.com/pierre-santos013/iac" target="_blank" rel="noopener noreferrer" class="btn-ghost">
-        Ver no GitHub
-      </a>
-    </div>
-
-    <div class="fade-up" style="margin-top:64px;display:flex;flex-direction:column;align-items:center;gap:8px;transition-delay:0.7s;">
-      <span style="font-size:11px;color:var(--text-4);letter-spacing:0.1em;text-transform:uppercase;transition:color 0.35s;">scroll</span>
-      <div style="width:1px;height:32px;background:linear-gradient(to bottom, var(--text-4), transparent);"></div>
-    </div>
-  </div>
-</section>
-
-<!-- MARQUEE -->
-<div style="padding:24px 0;border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);overflow:hidden;transition:border-color 0.35s;" class="marquee-mask">
-  <div class="marquee-track" style="display:flex;gap:48px;white-space:nowrap;">
-    {["Claude (Anthropic)", "GPT-4o (OpenAI)", "Ollama Local", "Llama 3", "Mistral", "GLM-5.1", "Gemma", "DeepSeek", "Claude (Anthropic)", "GPT-4o (OpenAI)", "Ollama Local", "Llama 3", "Mistral", "GLM-5.1", "Gemma", "DeepSeek"].map((p) => (
-      <span style="font-size:13px;color:var(--marquee-text);font-weight:500;display:inline-flex;align-items:center;gap:12px;transition:color 0.35s;">
-        <span style="width:4px;height:4px;border-radius:9999px;background:var(--border);display:inline-block;"></span>
-        {p}
-      </span>
-    ))}
-  </div>
-</div>
-
-<!-- FEATURES -->
-<section id="features" style="padding:100px 24px;max-width:1100px;margin:0 auto;">
-  <div class="fade-up" style="text-align:center;margin-bottom:60px;">
-    <p class="section-label" style="margin-bottom:12px;">Funcionalidades</p>
-    <h2 style="font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--text-1);letter-spacing:-0.03em;line-height:1.1;transition:color 0.35s;">
-      Tudo que você precisa,<br/>em uma conversa
-    </h2>
-  </div>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-    {[
-      { icon:"📁", title:"Filesystem", desc:"Leia, crie e edite arquivos diretamente. Alterações com confirmação antes de executar." },
-      { icon:"💻", title:"Terminal",   desc:"Execute comandos Bash e PowerShell sem sair da conversa. Timeout configurável." },
-      { icon:"🌐", title:"Web & busca",desc:"Pesquise no DuckDuckGo e acesse URLs com conversão automática para Markdown." },
-      { icon:"🔌", title:"Multi-provider",desc:"Claude, GPT, ou qualquer modelo local via Ollama — sem lock-in de plataforma." },
-    ].map(({ icon, title, desc }, i) => (
-      <div class="flash-card fade-up" style={`padding:28px;transition-delay:${i * 0.1}s;`}>
-        <div style="font-size:28px;margin-bottom:16px;">{icon}</div>
-        <h3 style="font-size:15px;font-weight:600;color:var(--text-1);margin-bottom:8px;transition:color 0.35s;">{title}</h3>
-        <p style="font-size:13px;color:var(--text-3);line-height:1.65;transition:color 0.35s;">{desc}</p>
-      </div>
-    ))}
-  </div>
-</section>
-
-<!-- DOWNLOAD -->
-<section id="download" style="padding:80px 24px 120px;max-width:700px;margin:0 auto;text-align:center;">
-  <div class="fade-up" style="margin-bottom:48px;">
-    <p class="section-label" style="margin-bottom:12px;">Download</p>
-    <h2 style="font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--text-1);letter-spacing:-0.03em;line-height:1.1;margin-bottom:14px;transition:color 0.35s;">
-      Pronto para começar?
-    </h2>
-    <p style="font-size:16px;color:var(--text-3);transition:color 0.35s;">Instale em menos de dois minutos. Sem assinatura.</p>
-  </div>
-
-  <!-- Download card -->
-  <div class="fade-up" style="background:var(--bg-dl);border:1px solid var(--border);border-radius:20px;box-shadow:0 0 60px var(--glow),0 0 120px var(--glow-strong);padding:32px;margin-bottom:48px;text-align:left;transition:background 0.35s,border-color 0.35s,box-shadow 0.35s;">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;">
-      <div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-          <span style="font-size:15px;font-weight:600;color:var(--text-1);transition:color 0.35s;">Local AI Assistant</span>
-          <span id="version-badge" style="font-size:11px;padding:3px 8px;border-radius:9999px;background:var(--accent-dim);border:1px solid var(--accent-ring);color:var(--accent-text);font-family:monospace;transition:all 0.35s;">carregando...</span>
+    <!-- Content Container -->
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 grid lg:grid-cols-[1.2fr_1fr] gap-12 lg:gap-8 items-center">
+      
+      <!-- Left Content -->
+      <div class="max-w-xl mx-auto lg:mx-0">
+        <!-- Top Badge -->
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white/5 border border-white/10 backdrop-blur-md mb-8">
+          <svg class="w-4 h-4 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+          <span class="text-xs font-semibold text-gray-300 tracking-wide">Social Growth, Autopilot Mode</span>
         </div>
-        <p style="font-size:13px;color:var(--text-3);transition:color 0.35s;">Windows 10 / 11 &middot; x64 &middot; Instalador NSIS</p>
+
+        <!-- Headline -->
+        <h1 class="text-5xl sm:text-6xl lg:text-[4.7rem] font-bold tracking-tight leading-[1.05] text-white mb-6">
+          SOCIAL REACH<br/>
+          AUTOMATED<br/>
+          GROWTH VIRAL<br/>
+          RESULTS
+        </h1>
+
+        <!-- Paragraph -->
+        <p class="text-[17px] text-gray-400 leading-relaxed mb-10 max-w-[90%]">
+          Stop guessing what works. Luminous analyzes trends and automates our content strategy for maximum engagement across every platform.
+        </p>
+
+        <!-- CTAs -->
+        <div class="flex flex-wrap items-center gap-4">
+          <button class="btn-gradient-explore text-[#4a2400] font-bold px-8 py-3.5 rounded-full text-[15px]">
+            Explore design
+          </button>
+          <button class="bg-white hover:bg-gray-100 text-black font-bold px-8 py-3.5 rounded-full text-[15px] transition-colors">
+            View Features
+          </button>
+        </div>
       </div>
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--text-3)"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
-    </div>
 
-    <a id="download-btn" href="#" class="btn-beam" style="margin-bottom:14px;">
-      <span class="beam"></span>
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-      <span id="download-label">Baixar instalador (.exe)</span>
-    </a>
+      <!-- Right Content (Widget Card) -->
+      <div class="w-full flex justify-center lg:justify-end">
+        <div class="relative w-full max-w-[420px] float-anim">
+          
+          <!-- Outer glow for the widget -->
+          <div class="absolute inset-0 bg-orange-600/10 blur-[60px] rounded-[2rem]"></div>
+          
+          <!-- Card Body -->
+          <div class="relative bg-black/60 backdrop-blur-2xl rounded-[2rem] p-8 card-border-gradient overflow-hidden">
+            
+            <!-- Shiny top border highlight -->
+            <div class="absolute top-0 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-orange-400/60 to-transparent"></div>
 
-    <p style="text-align:center;font-size:12px;color:var(--text-4);transition:color 0.35s;">
-      Também disponível:&nbsp;
-      <a id="portable-link" href="https://github.com/pierre-santos013/iac/releases/latest" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">versão portable</a>
-      &nbsp;·&nbsp;
-      <a href="https://github.com/pierre-santos013/iac/releases" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">todas as versões</a>
-    </p>
-  </div>
+            <!-- Card Inner Header -->
+            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded border border-white/5 bg-white/5 mb-8">
+              <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.8)]"></span>
+              <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">VIRAL RESULT</span>
+            </div>
 
-  <!-- Steps -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:40px;" class="fade-up">
-    {[
-      { n:"1", t:"Baixe",     d:"Clique no botão e baixe o arquivo .exe." },
-      { n:"2", t:"Instale",   d:"Execute o instalador e siga as instruções." },
-      { n:"3", t:"Configure", d:"Insira sua chave de API ou configure o Ollama." },
-    ].map(({ n, t, d }) => (
-      <div style="text-align:left;">
-        <div style="width:32px;height:32px;border-radius:8px;background:var(--accent-dim);border:1px solid var(--accent-ring);color:var(--accent);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;transition:all 0.35s;">{n}</div>
-        <h4 style="font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:6px;transition:color 0.35s;">{t}</h4>
-        <p style="font-size:13px;color:var(--text-3);line-height:1.6;transition:color 0.35s;">{d}</p>
+            <h3 class="text-[22px] font-semibold text-white mb-1.5">Growth Velocity</h3>
+            <p class="text-sm text-gray-400 mb-8">Automated engagement hitting viral peaks.</p>
+
+            <!-- Stats -->
+            <div class="flex items-end gap-3 mb-8">
+              <div class="text-white flex items-baseline">
+                <span class="text-[44px] font-light leading-none tracking-tight">+842</span>
+                <span class="text-3xl font-light text-gray-300 ml-0.5">%</span>
+              </div>
+              <div class="flex items-center gap-1.5 px-2 py-1 bg-orange-500/10 border border-orange-500/20 rounded text-orange-400 text-[11px] font-semibold mb-2">
+                <span>↑</span> vs last week
+              </div>
+            </div>
+
+            <!-- Chart Box -->
+            <div class="w-full h-[70px] relative mb-8">
+              <svg width="100%" height="100%" viewBox="0 0 300 70" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="orangeGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#f97316" stop-opacity="0.3"></stop>
+                    <stop offset="100%" stop-color="#f97316" stop-opacity="0"></stop>
+                  </linearGradient>
+                  <!-- Soft line glow -->
+                  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                </defs>
+                <!-- Filled Area -->
+                <path d="M 0 65 C 50 65, 100 50, 150 45 C 200 40, 250 25, 300 10 L 300 70 L 0 70 Z" class="chart-fill"></path>
+                <!-- Line -->
+                <path d="M 0 65 C 50 65, 100 50, 150 45 C 200 40, 250 25, 300 10" fill="none" stroke="#f97316" stroke-width="2.5" filter="url(#glow)"></path>
+                <!-- End Dot -->
+                <circle cx="300" cy="10" r="4" fill="#fff" stroke="#f97316" stroke-width="2" filter="url(#glow)"></circle>
+              </svg>
+            </div>
+
+            <!-- Action Button -->
+            <button class="w-full btn-gradient-analyze text-white font-semibold text-[15px] py-4 rounded-xl mb-8 flex justify-center items-center">
+              Analyze Trends
+            </button>
+
+            <!-- Bottom Stats -->
+            <div class="space-y-6">
+              <!-- Impressions -->
+              <div class="flex items-center justify-between text-[13px]">
+                <div class="flex items-center gap-2 text-gray-400 font-medium">
+                  <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.478 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  Total Impressions
+                </div>
+                <div class="text-white font-semibold">2.4M</div>
+              </div>
+
+              <!-- Divider -->
+              <div class="flex items-center gap-4">
+                <div class="flex-1 h-px bg-white/5"></div>
+                <div class="text-[10px] font-bold text-gray-500 tracking-[0.2em] uppercase">AI POWERED SCALE</div>
+                <div class="flex-1 h-px bg-white/5"></div>
+              </div>
+
+              <!-- Auto Optimization -->
+              <div class="flex items-center justify-between text-[13px] text-gray-300 font-medium">
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l2.4 7.6H22l-6.2 4.8 2.3 7.2-6.1-4.8-6.1 4.8 2.3-7.2L2 9.6h7.6z"/>
+                  </svg>
+                  Auto-Optimization
+                </div>
+                <!-- Optional status dot or icon here if needed -->
+                <div></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
-    ))}
-  </div>
 
-  <!-- Requirements -->
-  <div class="fade-up" style="border:1px solid var(--border);border-radius:12px;padding:20px 24px;text-align:left;transition:border-color 0.35s;">
-    <p style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-4);margin-bottom:14px;transition:color 0.35s;">Requisitos</p>
-    <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
-      {["Windows 10 ou 11 (64-bit)","Conexão com internet (para APIs externas)","Chave de API Anthropic ou OpenAI — ou Ollama local (gratuito)"].map(r => (
-        <li style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--req-text);transition:color 0.35s;">
-          <span style="color:#22c55e;font-size:14px;">✓</span> {r}
-        </li>
-      ))}
-    </ul>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer style="border-top:1px solid var(--border-soft);padding:32px 24px;transition:border-color 0.35s;">
-  <div style="max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;">
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span>🤖</span>
-      <span style="font-size:13px;color:var(--text-4);transition:color 0.35s;">Local AI Assistant</span>
     </div>
-    <div style="display:flex;align-items:center;gap:20px;">
-      {[["GitHub","https://github.com/pierre-santos013/iac"],["Releases","https://github.com/pierre-santos013/iac/releases"],["Reportar bug","https://github.com/pierre-santos013/iac/issues"]].map(([label, url]) => (
-        <a href={url} target="_blank" rel="noopener noreferrer"
-          style="font-size:13px;color:var(--text-4);text-decoration:none;transition:color 0.2s;"
-          onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-4)'">{label}</a>
-      ))}
-    </div>
-  </div>
-</footer>
+  </main>
+  
+  <script>
+    (function () {
+      const canvas = document.getElementById('plasma-sparks');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-<script>
-  // ── Data flow cascade ──
-  (function () {
-    const canvas = document.getElementById('data-flow') as HTMLCanvasElement | null;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+      let W = 0, H = 0, cx = 0;
+      let particles = [];
+      const COLORS = ['#ffed4a', '#ffae00', '#ff5100', '#ffffff', '#ffd166'];
 
-    let W = 0;
-    let H = 0;
-    let cx = 0;
-    let raf = 0;
-
-    const BEAM_COLORS = ['#93c5fd', '#60a5fa', '#38bdf8', '#3b82f6', '#1d4ed8', '#bfdbfe'];
-
-    interface Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      life: number;
-      maxLife: number;
-      color: string;
-    }
-
-    interface Streak {
-      x: number;
-      y: number;
-      vy: number;
-      len: number;
-      life: number;
-      maxLife: number;
-      alpha: number;
-    }
-
-    const particles: Particle[] = [];
-    const streaks: Streak[] = [];
-
-    function resize() {
-      const rect = canvas.parentElement?.getBoundingClientRect();
-      if (!rect) return;
-      W = canvas.width = rect.width;
-      H = canvas.height = rect.height;
-      cx = W * 0.68;
-    }
-
-    function spawnParticle(yOverride?: number) {
-      const y = yOverride ?? Math.random() * H;
-      const t = Math.min(1, y / Math.max(H, 1));
-      const sideSpread = 6 + t * (W * 0.22);
-      const x = cx + (Math.random() * 2 - 1) * sideSpread;
-      const distance = Math.abs(x - cx);
-      const proximity = 1 - Math.min(1, distance / (W * 0.25));
-
-      particles.push({
-        x,
-        y,
-        vx: (Math.random() * 2 - 1) * (0.25 + t * 1.7),
-        vy: 1.4 + Math.random() * 3.2 + t * 1.6,
-        size: 0.6 + proximity * 2.9 + Math.random() * 0.8,
-        life: 0,
-        maxLife: 65 + Math.random() * 95,
-        color: BEAM_COLORS[(Math.random() * BEAM_COLORS.length) | 0],
-      });
-    }
-
-    function spawnStreak(yOverride?: number) {
-      const fast = Math.random() < 0.3; // 30% são muito rápidos
-      streaks.push({
-        x: cx + (Math.random() * 2 - 1) * 8,
-        y: yOverride ?? Math.random() * H * 0.5,
-        vy: fast ? 28 + Math.random() * 22 : 10 + Math.random() * 12,
-        len: fast ? 30 + Math.random() * 40 : 12 + Math.random() * 18,
-        life: 0,
-        maxLife: fast ? 8 + Math.random() * 10 : 14 + Math.random() * 20,
-        alpha: fast ? 0.9 + Math.random() * 0.1 : 0.6 + Math.random() * 0.35,
-      });
-    }
-
-    function drawBeamStructure() {
-      const columnHalf = Math.max(96, W * 0.09);
-
-      // 1) outer aura: 480px total width, 9% opacity
-      const aura = ctx.createLinearGradient(cx - 240, 0, cx + 240, 0);
-      aura.addColorStop(0, 'rgba(147,197,253,0)');
-      aura.addColorStop(0.5, 'rgba(147,197,253,0.09)');
-      aura.addColorStop(1, 'rgba(147,197,253,0)');
-      ctx.fillStyle = aura;
-      ctx.fillRect(cx - 240, 0, 480, H);
-
-      // 2) wide glow: 200px width, 22% opacity
-      const wide = ctx.createLinearGradient(cx - 100, 0, cx + 100, 0);
-      wide.addColorStop(0, 'rgba(96,165,250,0)');
-      wide.addColorStop(0.5, 'rgba(96,165,250,0.22)');
-      wide.addColorStop(1, 'rgba(96,165,250,0)');
-      ctx.fillStyle = wide;
-      ctx.fillRect(cx - 100, 0, 200, H);
-
-      // 3) mid glow: 60px width, 55% opacity
-      const mid = ctx.createLinearGradient(cx - 30, 0, cx + 30, 0);
-      mid.addColorStop(0, 'rgba(56,189,248,0)');
-      mid.addColorStop(0.5, 'rgba(56,189,248,0.55)');
-      mid.addColorStop(1, 'rgba(56,189,248,0)');
-      ctx.fillStyle = mid;
-      ctx.fillRect(cx - 30, 0, 60, H);
-
-      // 4) core: 4px nítido + shadowBlur duplo para intensidade
-      ctx.save();
-      ctx.shadowColor = '#e0f2fe';
-      ctx.shadowBlur = 20;
-      const core = ctx.createLinearGradient(cx - 2, 0, cx + 2, 0);
-      core.addColorStop(0, 'rgba(224,242,254,0)');
-      core.addColorStop(0.5, 'rgba(224,242,254,1)');
-      core.addColorStop(1, 'rgba(224,242,254,0)');
-      ctx.fillStyle = core;
-      ctx.fillRect(cx - 2, 0, 4, H);
-      ctx.restore();
-      // segundo passe do core com blur maior para halo
-      ctx.save();
-      ctx.shadowColor = '#60a5fa';
-      ctx.shadowBlur = 55;
-      ctx.globalAlpha *= 0.7;
-      ctx.fillStyle = 'rgba(96,165,250,0.9)';
-      ctx.fillRect(cx - 2, 0, 4, H);
-      ctx.restore();
-
-      // top bloom: radius 150
-      const topBloom = ctx.createRadialGradient(cx, 0, 0, cx, 0, 150);
-      topBloom.addColorStop(0, 'rgba(59,130,246,0.6)');
-      topBloom.addColorStop(1, 'rgba(59,130,246,0)');
-      ctx.fillStyle = topBloom;
-      ctx.fillRect(cx - 150, 0, 300, 150);
-
-      // base central bloom: radius 280
-      ctx.save();
-      const baseBloom = ctx.createRadialGradient(cx, H, 0, cx, H, 280);
-      baseBloom.addColorStop(0, 'rgba(59,130,246,0.7)');
-      baseBloom.addColorStop(0.45, 'rgba(59,130,246,0.32)');
-      baseBloom.addColorStop(1, 'rgba(59,130,246,0)');
-      ctx.fillStyle = baseBloom;
-      ctx.fillRect(cx - 280, H - 280, 560, 280);
-      ctx.restore();
-
-      // floor spread: flattened ellipse ~700x120 at base using scale
-      ctx.save();
-      ctx.translate(cx, H - 12);
-      ctx.scale(1, 0.172);
-      ctx.shadowColor = 'rgba(96,165,250,0.45)';
-      ctx.shadowBlur = 60;
-      const floor = ctx.createRadialGradient(0, 0, 0, 0, 0, 350);
-      floor.addColorStop(0, 'rgba(96,165,250,0.25)');
-      floor.addColorStop(0.6, 'rgba(59,130,246,0.12)');
-      floor.addColorStop(1, 'rgba(96,165,250,0)');
-      ctx.fillStyle = floor;
-      ctx.beginPath();
-      ctx.arc(0, 0, 350, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    function render() {
-      ctx.clearRect(0, 0, W, H);
-
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      const baseAlpha = isLight ? 0.15 : 0.95;
-      ctx.globalAlpha = baseAlpha;
-
-      drawBeamStructure();
-
-      // Dense particles (200+) flowing down and spreading sideways
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        const depth = Math.min(1, p.y / Math.max(H, 1));
-        p.vx += (Math.random() * 2 - 1) * 0.04;
-        p.vx += Math.sign(p.x - cx) * 0.012 * depth;
-        p.vx *= 0.995;
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life += 1;
-
-        const lifeRatio = p.life / p.maxLife;
-        const alpha = (1 - lifeRatio) * (0.45 + depth * 0.55);
-        if (alpha <= 0 || p.y > H + 24) {
-          particles.splice(i, 1);
-          continue;
-        }
-
-        // traço nítido orientado pela velocidade
-        const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        const nx = p.vx / spd, ny = p.vy / spd;
-        const len = 6 + spd * 2.2 + p.size * 2.5;
-        const ex = p.x - nx * len;
-        const ey = p.y - ny * len;
-
-        ctx.save();
-        ctx.globalAlpha = baseAlpha * alpha;
-        ctx.lineCap = 'round';
-        // corpo do traço
-        ctx.strokeStyle = p.color;
-        ctx.lineWidth = Math.max(0.8, p.size * 0.5);
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 4;
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(ex, ey);
-        ctx.stroke();
-        // ponta brilhante (head)
-        ctx.shadowBlur = 0;
-        ctx.strokeStyle = '#e0f2fe';
-        ctx.lineWidth = Math.max(0.6, p.size * 0.3);
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(p.x - nx * len * 0.25, p.y - ny * len * 0.25);
-        ctx.stroke();
-        ctx.restore();
+      function resize() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        W = canvas.width = rect.width;
+        H = canvas.height = rect.height;
+        cx = W / 2;
       }
 
-      // Fast streaks along core
-      for (let i = streaks.length - 1; i >= 0; i--) {
-        const s = streaks[i];
-        s.y += s.vy;
-        s.life += 1;
-        const lifeRatio = s.life / s.maxLife;
-        const alpha = s.alpha * (1 - lifeRatio);
-        if (alpha <= 0 || s.y > H + 30) {
-          streaks.splice(i, 1);
-          continue;
-        }
-
-        ctx.save();
-        ctx.globalAlpha = baseAlpha * alpha;
-        ctx.lineCap = 'round';
-        // corpo
-        ctx.strokeStyle = '#93c5fd';
-        ctx.lineWidth = 1.5;
-        ctx.shadowColor = '#60a5fa';
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        ctx.moveTo(s.x, s.y);
-        ctx.lineTo(s.x, s.y - s.len);
-        ctx.stroke();
-        // ponta branca
-        ctx.strokeStyle = '#f0f9ff';
-        ctx.lineWidth = 1;
-        ctx.shadowBlur = 0;
-        ctx.beginPath();
-        ctx.moveTo(s.x, s.y);
-        ctx.lineTo(s.x, s.y - s.len * 0.3);
-        ctx.stroke();
-        ctx.restore();
+      function createParticle() {
+        // Sparks originate strictly around the central pillar
+        const distance = Math.pow(Math.random(), 2) * 60; // Bias towards center
+        const sign = Math.random() > 0.5 ? 1 : -1;
+        const x = cx + sign * distance;
+        
+        // Start anywhere above the screen or upper half for continuous flow
+        const y = -20 - Math.random() * 50;
+        
+        // Initial velocities
+        const vx = (Math.random() - 0.5) * 0.8; 
+        const vy = 3 + Math.random() * 6; // Fast falling speed
+        const size = 0.5 + Math.random() * 3;
+        
+        particles.push({
+          x, y, vx, vy, size,
+          life: 0,
+          maxLife: 200 + Math.random() * 100, // Long life so they reach bottom
+          color: COLORS[Math.floor(Math.random() * COLORS.length)]
+        });
       }
 
-      const particleTarget = 300;
-      const streakTarget = 60;
-      for (let i = particles.length; i < particleTarget; i++) spawnParticle(Math.random() * H);
-      for (let i = streaks.length; i < streakTarget; i++) spawnStreak(Math.random() * H * 0.65);
+      window.addEventListener('resize', resize);
+      resize();
 
-      raf = requestAnimationFrame(render);
-    }
+      // Pre-fill the screen with particles
+      for (let i = 0; i < 200; i++) {
+         createParticle();
+         // Fast forward particle life to distribute them across the screen
+         const steps = Math.random() * particles[particles.length - 1].maxLife * 0.8;
+         for (let s = 0; s < steps; s++) {
+            const p = particles[particles.length - 1];
+            p.x += p.vx;
+            p.y += p.vy;
+         }
+      }
 
-    resize();
-    for (let i = 0; i < 300; i++) spawnParticle(Math.random() * H);
-    for (let i = 0; i < 60; i++) spawnStreak(Math.random() * H);
-    window.addEventListener('resize', resize, { passive: true });
-    raf = requestAnimationFrame(render);
-  })();
+      function render() {
+        ctx.clearRect(0, 0, W, H);
 
-  // ── Theme toggle ──
-  const html = document.documentElement;
-  const btn  = document.getElementById('theme-toggle');
-  const saved = localStorage.getItem('theme');
-  if (saved) html.setAttribute('data-theme', saved);
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          
+          p.vy += 0.08; // Gravity
+          
+          // Meandering effect mimicking plasma instability
+          p.vx += Math.sin((p.y * 0.01) + p.life) * 0.04;
+          
+          // Spread out rapidly when reaching the bottom floor (flare area)
+          if (p.y > H * 0.7) {
+            const spread = p.x > cx ? 1 : -1;
+            p.vx += spread * 0.15;
+          }
 
-  btn?.addEventListener('click', () => {
-    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-  });
+          // Friction limits speed
+          p.vx *= 0.98;
 
-  // ── Char reveal ──
-  function splitChars(el: HTMLElement) {
-    const text = el.textContent || '';
-    el.innerHTML = text.split('').map(c =>
-      c === ' ' ? ' ' : `<span class="char">${c}</span>`
-    ).join('');
-  }
-  function revealChars(el: HTMLElement, delay = 0) {
-    el.querySelectorAll<HTMLElement>('.char').forEach((ch, i) => {
-      setTimeout(() => ch.classList.add('revealed'), delay + i * 30);
-    });
-  }
-  const l1 = document.getElementById('hero-line1');
-  const l2 = document.getElementById('hero-line2');
-  if (l1) { splitChars(l1); revealChars(l1, 200); }
-  if (l2) { splitChars(l2); revealChars(l2, 600); }
+          const prevX = p.x;
+          const prevY = p.y;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.life++;
 
-  // ── Scroll fade-in ──
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
-  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll<HTMLElement>('.fade-up').forEach(el => io.observe(el));
+          if (p.y > H + 50 || p.life > p.maxLife || p.x < -50 || p.x > W + 50) {
+            particles.splice(i, 1);
+            createParticle();
+            continue;
+          }
 
-  // ── Parallax ──
-  window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    document.querySelectorAll<HTMLElement>('.parallax-slow').forEach(el => { el.style.transform = `translateY(${y * 0.15}px)`; });
-    document.querySelectorAll<HTMLElement>('.parallax-med').forEach(el  => { el.style.transform = `translateY(${y * 0.08}px)`; });
-  }, { passive: true });
+          // Calculate visual properties
+          const alphaFadeIn = Math.min(1, p.life / 20); // Fade in
+          const alphaFadeOut = Math.max(0, 1 - (p.y / (H + 50))); // Fade out as it leaves bottom
+          let alpha = Math.min(alphaFadeIn, alphaFadeOut);
 
-  // ── Flashlight ──
-  document.querySelectorAll<HTMLElement>('.flash-card').forEach(card => {
-    card.addEventListener('mousemove', (e: MouseEvent) => {
-      const r = card.getBoundingClientRect();
-      card.style.setProperty('--mx', `${e.clientX - r.left}px`);
-      card.style.setProperty('--my', `${e.clientY - r.top}px`);
-    });
-  });
+          // Render trail
+          ctx.beginPath();
+          ctx.lineCap = 'round';
+          ctx.lineWidth = p.size;
+          ctx.strokeStyle = p.color;
+          ctx.globalAlpha = alpha;
+          
+          // Adds intense glow to larger sparks
+          if (p.size > 2) {
+             ctx.shadowBlur = 10;
+             ctx.shadowColor = p.color;
+          } else {
+             ctx.shadowBlur = 0;
+          }
 
-  // ── GitHub Releases ──
-  async function loadRelease() {
-    try {
-      const res = await fetch('https://api.github.com/repos/pierre-santos013/iac/releases/latest');
-      if (!res.ok) return;
-      const { tag_name, assets } = await res.json() as {
-        tag_name: string;
-        assets: { name: string; browser_download_url: string }[];
-      };
-      const badge = document.getElementById('version-badge');
-      if (badge) badge.textContent = tag_name;
-      const setup    = assets.find(a => a.name.includes('Setup') && a.name.endsWith('.exe'));
-      const portable = assets.find(a => !a.name.includes('Setup') && a.name.endsWith('.exe') && !a.name.endsWith('.blockmap'));
-      const dlBtn    = document.getElementById('download-btn') as HTMLAnchorElement | null;
-      const dlLabel  = document.getElementById('download-label');
-      if (dlBtn && setup) { dlBtn.href = setup.browser_download_url; if (dlLabel) dlLabel.textContent = `Baixar ${setup.name}`; }
-      const portLink = document.getElementById('portable-link') as HTMLAnchorElement | null;
-      if (portLink && portable) portLink.href = portable.browser_download_url;
-    } catch { /* fallback */ }
-  }
-  loadRelease();
-</script>
+          ctx.moveTo(prevX, prevY);
+          const stretch = p.vy * 1.5;
+          ctx.lineTo(p.x, p.y - stretch);
+          ctx.stroke();
 
+          // Render hot core
+          ctx.beginPath();
+          ctx.fillStyle = '#ffffff';
+          ctx.globalAlpha = alpha;
+          ctx.shadowBlur = 0;
+          ctx.arc(p.x, p.y, p.size * 0.3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        requestAnimationFrame(render);
+      }
+      
+      requestAnimationFrame(render);
+    })();
+  </script>
 </body>
 </html>
