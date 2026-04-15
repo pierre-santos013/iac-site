@@ -27,3 +27,10 @@ Thumbs.db
 
 # Local tool config
 .gitconfig-codex
+
+# Installers (distribuídos via GitHub Releases, não no repo)
+*.exe
+*.dmg
+*.pkg
+*.deb
+*.AppImage
