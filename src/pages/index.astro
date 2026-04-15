@@ -461,9 +461,9 @@
 
     <p style="text-align:center;font-size:12px;color:var(--text-4);transition:color 0.35s;">
       Também disponível:&nbsp;
-      <a id="portable-link" href="https://github.com/pierre-santos013/iac/releases/latest" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">versão portable</a>
+      <a id="portable-link" href="https://github.com/pierre-santos013/iac-site/releases/latest" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">versão portable</a>
       &nbsp;·&nbsp;
-      <a href="https://github.com/pierre-santos013/iac/releases" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">todas as versões</a>
+      <a href="https://github.com/pierre-santos013/iac-site/releases" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">todas as versões</a>
     </p>
   </div>
 
@@ -727,18 +727,7 @@
         ctx.shadowBlur = 4;
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
-
-        // perspectiva na base: streaks curvam para fora do eixo (vanishing point)
-        const depthFactor = Math.min(1, p.y / Math.max(H, 1));
-        if (depthFactor > 0.65 && Math.abs(p.x - cx) > 2) {
-          const side = Math.sign(p.x - cx);
-          const curve = side * depthFactor * 6;
-          const midX = p.x - nx * len * 0.5 + curve;
-          const midY = p.y - ny * len * 0.5;
-          ctx.quadraticCurveTo(midX, midY, ex + curve * 1.5, ey);
-        } else {
-          ctx.lineTo(ex, ey);
-        }
+        ctx.lineTo(ex, ey);
         ctx.stroke();
         // ponta brilhante
         ctx.shadowBlur = 0;
@@ -867,7 +856,7 @@
   // ── GitHub Releases ──
   async function loadRelease() {
     try {
-      const res = await fetch('https://api.github.com/repos/pierre-santos013/iac/releases/latest');
+      const res = await fetch('https://api.github.com/repos/pierre-santos013/iac-site/releases/latest');
       if (!res.ok) return;
       const { tag_name, assets } = await res.json() as {
         tag_name: string;
