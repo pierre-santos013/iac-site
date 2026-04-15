@@ -1,32 +1,762 @@
 ---
-import Header from '../components/Header.astro';
-import Hero from '../components/Hero.astro';
-import Features from '../components/Features.astro';
-import Download from '../components/Download.astro';
-import Footer from '../components/Footer.astro';
 ---
 <!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Local AI Assistant — Assistente de IA para Windows</title>
-    <meta name="description" content="Assistente de IA local com acesso ao filesystem, terminal e web. Compatível com Claude, OpenAI e Ollama." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <style>
-      body { font-family: 'Inter', system-ui, sans-serif; }
-      html { scroll-behavior: smooth; }
-    </style>
-  </head>
-  <body class="bg-white text-gray-900 antialiased">
-    <Header />
-    <main>
-      <Hero />
-      <Features />
-      <Download />
-    </main>
-    <Footer />
-  </body>
+<html lang="pt-BR" class="scroll-smooth" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Local AI Assistant — IA local para Windows</title>
+  <meta name="description" content="Assistente de IA local com acesso ao filesystem, terminal e web. Claude, OpenAI e Ollama." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --bg:           #050505;
+      --bg-card:      rgba(18,18,18,0.6);
+      --bg-header:    rgba(5,5,5,0.8);
+      --bg-dl:        #0a0a0a;
+      --text-1:       #f9fafb;
+      --text-2:       #9ca3af;
+      --text-3:       #6b7280;
+      --text-4:       #4b5563;
+      --border:       rgba(255,255,255,0.07);
+      --border-soft:  rgba(255,255,255,0.05);
+      --grid-color:   rgba(255,255,255,0.03);
+      --accent:       #10b981;
+      --accent-hover: #059669;
+      --accent-r:     16; --accent-g: 185; --accent-b: 129;
+      --accent-dim:   rgba(16,185,129,0.12);
+      --accent-ring:  rgba(16,185,129,0.25);
+      --accent-text:  #6ee7b7;
+      --accent-muted: #34d399;
+      --orb1:         rgba(5,150,105,0.15);
+      --orb2:         rgba(52,211,153,0.1);
+      --orb3:         rgba(16,185,129,0.08);
+      --glow:         rgba(16,185,129,0.12);
+      --glow-strong:  rgba(16,185,129,0.06);
+      --scroll-thumb: #262626;
+      --stars-op:     0.25;
+      --marquee-text: #4b5563;
+      --req-text:     #9ca3af;
+      --toggle-bg:    rgba(255,255,255,0.06);
+      --toggle-border:rgba(255,255,255,0.1);
+      --toggle-icon:  #9ca3af;
+    }
+
+    html[data-theme="light"] {
+      --bg:           #f8fafc;
+      --bg-card:      rgba(255,255,255,0.9);
+      --bg-header:    rgba(248,250,252,0.9);
+      --bg-dl:        #ffffff;
+      --text-1:       #0f172a;
+      --text-2:       #475569;
+      --text-3:       #64748b;
+      --text-4:       #94a3b8;
+      --border:       rgba(0,0,0,0.07);
+      --border-soft:  rgba(0,0,0,0.05);
+      --grid-color:   rgba(0,0,0,0.04);
+      --accent:       #059669;
+      --accent-hover: #047857;
+      --accent-r:     5; --accent-g: 150; --accent-b: 105;
+      --accent-dim:   rgba(5,150,105,0.08);
+      --accent-ring:  rgba(5,150,105,0.2);
+      --accent-text:  #065f46;
+      --accent-muted: #059669;
+      --orb1:         rgba(5,150,105,0.07);
+      --orb2:         rgba(52,211,153,0.05);
+      --orb3:         rgba(16,185,129,0.04);
+      --glow:         rgba(5,150,105,0.08);
+      --glow-strong:  rgba(5,150,105,0.04);
+      --scroll-thumb: #cbd5e1;
+      --stars-op:     0;
+      --marquee-text: #94a3b8;
+      --req-text:     #64748b;
+      --toggle-bg:    rgba(0,0,0,0.04);
+      --toggle-border:rgba(0,0,0,0.1);
+      --toggle-icon:  #64748b;
+    }
+
+    /* ── Reset ── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-1);
+      overflow-x: hidden;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 4px; }
+
+    /* ── Grid ── */
+    .grid-bg {
+      background-image:
+        linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+      background-size: 40px 40px;
+      transition: background-image 0.35s ease;
+    }
+
+    /* ── Stars ── */
+    .stars {
+      background-image:
+        radial-gradient(1px 1px at 15px 25px, #fff, transparent),
+        radial-gradient(1px 1px at 80px 60px, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 200px 40px, #fff, transparent),
+        radial-gradient(1px 1px at 320px 90px, #fff, transparent),
+        radial-gradient(1px 1px at 450px 20px, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 550px 70px, #fff, transparent),
+        radial-gradient(1px 1px at 700px 30px, #fff, transparent),
+        radial-gradient(1px 1px at 820px 80px, #fff, transparent),
+        radial-gradient(1px 1px at 950px 45px, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 1100px 25px, #fff, transparent),
+        radial-gradient(1px 1px at 1250px 60px, #fff, transparent),
+        radial-gradient(1px 1px at 1380px 35px, #fff, transparent);
+      background-size: 1440px 120px;
+      opacity: var(--stars-op);
+      transition: opacity 0.35s ease;
+    }
+
+    /* ── Char reveal ── */
+    .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(110%);
+      clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .char.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    /* ── Scroll fade-in ── */
+    .fade-up {
+      opacity: 0;
+      filter: blur(8px);
+      transform: translateY(24px);
+      transition:
+        opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        filter 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .fade-up.visible { opacity: 1; filter: blur(0); transform: translateY(0); }
+
+    /* ── Orbs ── */
+    .orb {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(80px);
+      pointer-events: none;
+      transition: background 0.35s ease;
+    }
+
+    /* ── Flashlight card ── */
+    .flash-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      backdrop-filter: blur(8px);
+      transition: border-color 0.3s, transform 0.3s, background 0.35s;
+    }
+    .flash-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(500px circle at var(--mx,50%) var(--my,50%), rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.1), transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .flash-card::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: radial-gradient(400px circle at var(--mx,50%) var(--my,50%), rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.2), transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+      z-index: 0;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      padding: 1px;
+    }
+    .flash-card:hover::before,
+    .flash-card:hover::after { opacity: 1; }
+    .flash-card:hover { transform: translateY(-2px); }
+    .flash-card > * { position: relative; z-index: 2; }
+
+    /* ── Border beam button ── */
+    .btn-beam {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: 100%;
+    }
+    .btn-beam:hover { background: var(--accent-hover); }
+    .btn-beam .beam {
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,255,255,0.5) 60deg, transparent 120deg);
+      animation: rotate-beam 2.5s linear infinite;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      padding: 2px;
+    }
+    .btn-beam:hover .beam { opacity: 1; }
+    @keyframes rotate-beam { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* ── Ghost button ── */
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--toggle-bg);
+      border: 1px solid var(--toggle-border);
+      color: var(--text-2);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 12px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover {
+      background: rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.08);
+      border-color: var(--accent-ring);
+      color: var(--text-1);
+    }
+
+    /* ── Toggle ── */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: var(--toggle-bg);
+      border: 1px solid var(--toggle-border);
+      color: var(--toggle-icon);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover {
+      background: var(--accent-dim);
+      border-color: var(--accent-ring);
+      color: var(--accent);
+    }
+    .icon-sun  { display: none; }
+    .icon-moon { display: block; }
+    html[data-theme="light"] .icon-sun  { display: block; }
+    html[data-theme="light"] .icon-moon { display: none; }
+
+    /* ── Marquee ── */
+    @keyframes marquee-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .marquee-track { animation: marquee-left 30s linear infinite; }
+    .marquee-mask {
+      mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+    }
+
+    /* ── Misc ── */
+    .parallax-slow { will-change: transform; }
+    .parallax-med  { will-change: transform; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-ring);
+      color: var(--accent-text);
+      font-size: 12px;
+      font-weight: 500;
+      transition: background 0.35s, border-color 0.35s, color 0.35s;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 9999px;
+      background: var(--accent-muted);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:0.5; transform:scale(0.8); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header style="position:fixed;top:0;left:0;right:0;z-index:50;background:var(--bg-header);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-soft);transition:background 0.35s,border-color 0.35s;">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:22px;">🤖</span>
+      <span style="font-size:14px;font-weight:600;color:var(--text-1);letter-spacing:-0.02em;transition:color 0.35s;">Local AI Assistant</span>
+    </div>
+    <nav style="display:flex;align-items:center;gap:20px;">
+      <a href="#features" style="font-size:13px;color:var(--text-3);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-3)'">Funcionalidades</a>
+      <a href="#download" style="font-size:13px;color:var(--text-3);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-3)'">Download</a>
+      <a href="https://github.com/pierre-santos013/iac" target="_blank" rel="noopener noreferrer" style="font-size:13px;color:var(--text-3);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-3)'">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+        GitHub
+      </a>
+      <!-- TOGGLE -->
+      <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema">
+        <!-- Moon (dark mode ativo) -->
+        <svg class="icon-moon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <!-- Sun (light mode ativo) -->
+        <svg class="icon-sun" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section style="position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;padding-top:60px;">
+  <div class="grid-bg" style="position:absolute;inset:0;"></div>
+  <div class="stars" style="position:absolute;inset:0;"></div>
+  <div class="orb parallax-slow" style="width:500px;height:500px;background:var(--orb1);top:-100px;left:-150px;"></div>
+  <div class="orb parallax-med"  style="width:350px;height:350px;background:var(--orb2);bottom:-50px;right:-100px;"></div>
+  <div class="orb" style="width:200px;height:200px;background:var(--orb3);top:40%;left:60%;"></div>
+  <!-- Data flow cascade -->
+  <canvas id="data-flow" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;"></canvas>
+
+  <div style="position:relative;z-index:10;text-align:center;max-width:860px;padding:0 24px;">
+    <div class="badge fade-up" style="margin-bottom:28px;">
+      <span class="badge-dot"></span>
+      Gratuito &middot; Open source &middot; Windows
+    </div>
+
+    <h1 style="font-size:clamp(42px,6vw,80px);font-weight:800;line-height:1.05;letter-spacing:-0.04em;color:var(--text-1);margin-bottom:24px;">
+      <span id="hero-line1" style="display:block;overflow:hidden;transition:color 0.35s;">Um assistente de IA</span>
+      <span id="hero-line2" style="display:block;overflow:hidden;background:linear-gradient(135deg,#6ee7b7,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">que roda na sua máquina</span>
+    </h1>
+
+    <p class="fade-up" style="font-size:18px;color:var(--text-2);max-width:560px;margin:0 auto 40px;line-height:1.7;transition-delay:0.3s;transition:color 0.35s;">
+      Acesse arquivos, execute comandos no terminal e pesquise na web — tudo por linguagem natural. Compatível com Claude, OpenAI e Ollama.
+    </p>
+
+    <div class="fade-up" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;transition-delay:0.45s;">
+      <a id="hero-download-btn" href="#download" class="btn-beam" style="width:auto;">
+        <span class="beam"></span>
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Baixar para Windows
+      </a>
+      <a href="https://github.com/pierre-santos013/iac" target="_blank" rel="noopener noreferrer" class="btn-ghost">
+        Ver no GitHub
+      </a>
+    </div>
+
+    <div class="fade-up" style="margin-top:64px;display:flex;flex-direction:column;align-items:center;gap:8px;transition-delay:0.7s;">
+      <span style="font-size:11px;color:var(--text-4);letter-spacing:0.1em;text-transform:uppercase;transition:color 0.35s;">scroll</span>
+      <div style="width:1px;height:32px;background:linear-gradient(to bottom, var(--text-4), transparent);"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div style="padding:24px 0;border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);overflow:hidden;transition:border-color 0.35s;" class="marquee-mask">
+  <div class="marquee-track" style="display:flex;gap:48px;white-space:nowrap;">
+    {["Claude (Anthropic)", "GPT-4o (OpenAI)", "Ollama Local", "Llama 3", "Mistral", "GLM-5.1", "Gemma", "DeepSeek", "Claude (Anthropic)", "GPT-4o (OpenAI)", "Ollama Local", "Llama 3", "Mistral", "GLM-5.1", "Gemma", "DeepSeek"].map((p) => (
+      <span style="font-size:13px;color:var(--marquee-text);font-weight:500;display:inline-flex;align-items:center;gap:12px;transition:color 0.35s;">
+        <span style="width:4px;height:4px;border-radius:9999px;background:var(--border);display:inline-block;"></span>
+        {p}
+      </span>
+    ))}
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features" style="padding:100px 24px;max-width:1100px;margin:0 auto;">
+  <div class="fade-up" style="text-align:center;margin-bottom:60px;">
+    <p class="section-label" style="margin-bottom:12px;">Funcionalidades</p>
+    <h2 style="font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--text-1);letter-spacing:-0.03em;line-height:1.1;transition:color 0.35s;">
+      Tudo que você precisa,<br/>em uma conversa
+    </h2>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+    {[
+      { icon:"📁", title:"Filesystem", desc:"Leia, crie e edite arquivos diretamente. Alterações com confirmação antes de executar." },
+      { icon:"💻", title:"Terminal",   desc:"Execute comandos Bash e PowerShell sem sair da conversa. Timeout configurável." },
+      { icon:"🌐", title:"Web & busca",desc:"Pesquise no DuckDuckGo e acesse URLs com conversão automática para Markdown." },
+      { icon:"🔌", title:"Multi-provider",desc:"Claude, GPT, ou qualquer modelo local via Ollama — sem lock-in de plataforma." },
+    ].map(({ icon, title, desc }, i) => (
+      <div class="flash-card fade-up" style={`padding:28px;transition-delay:${i * 0.1}s;`}>
+        <div style="font-size:28px;margin-bottom:16px;">{icon}</div>
+        <h3 style="font-size:15px;font-weight:600;color:var(--text-1);margin-bottom:8px;transition:color 0.35s;">{title}</h3>
+        <p style="font-size:13px;color:var(--text-3);line-height:1.65;transition:color 0.35s;">{desc}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section id="download" style="padding:80px 24px 120px;max-width:700px;margin:0 auto;text-align:center;">
+  <div class="fade-up" style="margin-bottom:48px;">
+    <p class="section-label" style="margin-bottom:12px;">Download</p>
+    <h2 style="font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--text-1);letter-spacing:-0.03em;line-height:1.1;margin-bottom:14px;transition:color 0.35s;">
+      Pronto para começar?
+    </h2>
+    <p style="font-size:16px;color:var(--text-3);transition:color 0.35s;">Instale em menos de dois minutos. Sem assinatura.</p>
+  </div>
+
+  <!-- Download card -->
+  <div class="fade-up" style="background:var(--bg-dl);border:1px solid var(--border);border-radius:20px;box-shadow:0 0 60px var(--glow),0 0 120px var(--glow-strong);padding:32px;margin-bottom:48px;text-align:left;transition:background 0.35s,border-color 0.35s,box-shadow 0.35s;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-size:15px;font-weight:600;color:var(--text-1);transition:color 0.35s;">Local AI Assistant</span>
+          <span id="version-badge" style="font-size:11px;padding:3px 8px;border-radius:9999px;background:var(--accent-dim);border:1px solid var(--accent-ring);color:var(--accent-text);font-family:monospace;transition:all 0.35s;">carregando...</span>
+        </div>
+        <p style="font-size:13px;color:var(--text-3);transition:color 0.35s;">Windows 10 / 11 &middot; x64 &middot; Instalador NSIS</p>
+      </div>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--text-3)"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+    </div>
+
+    <a id="download-btn" href="#" class="btn-beam" style="margin-bottom:14px;">
+      <span class="beam"></span>
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      <span id="download-label">Baixar instalador (.exe)</span>
+    </a>
+
+    <p style="text-align:center;font-size:12px;color:var(--text-4);transition:color 0.35s;">
+      Também disponível:&nbsp;
+      <a id="portable-link" href="https://github.com/pierre-santos013/iac/releases/latest" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">versão portable</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/pierre-santos013/iac/releases" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">todas as versões</a>
+    </p>
+  </div>
+
+  <!-- Steps -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:40px;" class="fade-up">
+    {[
+      { n:"1", t:"Baixe",     d:"Clique no botão e baixe o arquivo .exe." },
+      { n:"2", t:"Instale",   d:"Execute o instalador e siga as instruções." },
+      { n:"3", t:"Configure", d:"Insira sua chave de API ou configure o Ollama." },
+    ].map(({ n, t, d }) => (
+      <div style="text-align:left;">
+        <div style="width:32px;height:32px;border-radius:8px;background:var(--accent-dim);border:1px solid var(--accent-ring);color:var(--accent);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;transition:all 0.35s;">{n}</div>
+        <h4 style="font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:6px;transition:color 0.35s;">{t}</h4>
+        <p style="font-size:13px;color:var(--text-3);line-height:1.6;transition:color 0.35s;">{d}</p>
+      </div>
+    ))}
+  </div>
+
+  <!-- Requirements -->
+  <div class="fade-up" style="border:1px solid var(--border);border-radius:12px;padding:20px 24px;text-align:left;transition:border-color 0.35s;">
+    <p style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-4);margin-bottom:14px;transition:color 0.35s;">Requisitos</p>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+      {["Windows 10 ou 11 (64-bit)","Conexão com internet (para APIs externas)","Chave de API Anthropic ou OpenAI — ou Ollama local (gratuito)"].map(r => (
+        <li style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--req-text);transition:color 0.35s;">
+          <span style="color:#22c55e;font-size:14px;">✓</span> {r}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="border-top:1px solid var(--border-soft);padding:32px 24px;transition:border-color 0.35s;">
+  <div style="max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span>🤖</span>
+      <span style="font-size:13px;color:var(--text-4);transition:color 0.35s;">Local AI Assistant</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:20px;">
+      {[["GitHub","https://github.com/pierre-santos013/iac"],["Releases","https://github.com/pierre-santos013/iac/releases"],["Reportar bug","https://github.com/pierre-santos013/iac/issues"]].map(([label, url]) => (
+        <a href={url} target="_blank" rel="noopener noreferrer"
+          style="font-size:13px;color:var(--text-4);text-decoration:none;transition:color 0.2s;"
+          onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-4)'">{label}</a>
+      ))}
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Data flow cascade ──
+  (function () {
+    const canvas = document.getElementById('data-flow') as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let W = 0, H = 0, cx = 0;
+    let raf = 0;
+
+    function resize() {
+      const rect = canvas!.parentElement!.getBoundingClientRect();
+      W = canvas!.width  = rect.width;
+      H = canvas!.height = rect.height;
+      cx = W * 0.68; // posição horizontal do feixe (lado direito do hero)
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    // ── Partículas ──
+    interface P {
+      x: number; y: number;
+      vx: number; vy: number;
+      size: number; op: number;
+      life: number; maxLife: number;
+      isStreak: boolean;
+    }
+
+    const particles: P[] = [];
+
+    function spawn() {
+      const isStreak = Math.random() < 0.25;
+      particles.push({
+        x: cx + (Math.random() - 0.5) * 24,
+        y: Math.random() * H * 0.12, // começa no topo
+        vx: (Math.random() - 0.5) * (isStreak ? 0.4 : 1.2),
+        vy: isStreak ? 6 + Math.random() * 6 : 2.5 + Math.random() * 3.5,
+        size: isStreak ? 0.8 + Math.random() * 1.2 : 1 + Math.random() * 2.5,
+        op: 0.5 + Math.random() * 0.5,
+        life: 0,
+        maxLife: isStreak ? 50 + Math.random() * 40 : 90 + Math.random() * 110,
+        isStreak,
+      });
+    }
+
+    // pré-popula
+    for (let i = 0; i < 80; i++) {
+      spawn();
+      const p = particles[particles.length - 1];
+      p.y = Math.random() * H;
+    }
+
+    // ── Cores do feixe ──
+    const BEAM_CORE  = 'rgba(96,165,250,1)';    // blue-400
+    const BEAM_MID   = 'rgba(59,130,246,0.35)'; // blue-500
+    const BEAM_OUTER = 'rgba(29,78,216,0.08)';  // blue-700
+    const P_COLORS   = ['#93c5fd','#60a5fa','#38bdf8','#7dd3fc','#bfdbfe'];
+
+    function drawBeam() {
+      // outer glow (wide)
+      const gOuter = ctx!.createLinearGradient(cx - 80, 0, cx + 80, 0);
+      gOuter.addColorStop(0,   'transparent');
+      gOuter.addColorStop(0.5, BEAM_OUTER);
+      gOuter.addColorStop(1,   'transparent');
+      ctx!.fillStyle = gOuter;
+      ctx!.fillRect(cx - 80, 0, 160, H);
+
+      // mid glow
+      const gMid = ctx!.createLinearGradient(cx - 28, 0, cx + 28, 0);
+      gMid.addColorStop(0,   'transparent');
+      gMid.addColorStop(0.5, BEAM_MID);
+      gMid.addColorStop(1,   'transparent');
+      ctx!.fillStyle = gMid;
+      ctx!.fillRect(cx - 28, 0, 56, H);
+
+      // core line
+      ctx!.save();
+      ctx!.shadowColor  = '#60a5fa';
+      ctx!.shadowBlur   = 18;
+      const gCore = ctx!.createLinearGradient(cx - 1.5, 0, cx + 1.5, 0);
+      gCore.addColorStop(0, 'transparent');
+      gCore.addColorStop(0.5, BEAM_CORE);
+      gCore.addColorStop(1, 'transparent');
+      ctx!.fillStyle = gCore;
+      ctx!.fillRect(cx - 1.5, 0, 3, H);
+      ctx!.restore();
+
+      // top bloom
+      const bloom = ctx!.createRadialGradient(cx, 0, 0, cx, 0, 120);
+      bloom.addColorStop(0, 'rgba(59,130,246,0.5)');
+      bloom.addColorStop(1, 'transparent');
+      ctx!.fillStyle = bloom;
+      ctx!.fillRect(cx - 120, 0, 240, 120);
+
+      // bottom bloom — raiz larga e proeminente
+      ctx!.save();
+      ctx!.shadowColor = '#3b82f6';
+      ctx!.shadowBlur  = 40;
+      // bloom central (circular)
+      const bBloom = ctx!.createRadialGradient(cx, H, 0, cx, H, 220);
+      bBloom.addColorStop(0,   'rgba(59,130,246,0.55)');
+      bBloom.addColorStop(0.35,'rgba(29,78,216,0.30)');
+      bBloom.addColorStop(1,   'transparent');
+      ctx!.fillStyle = bBloom;
+      ctx!.fillRect(cx - 220, H - 220, 440, 220);
+      // floor spread horizontal
+      const bFloor = ctx!.createRadialGradient(cx, H, 0, cx, H, 300);
+      bFloor.addColorStop(0,   'rgba(96,165,250,0.20)');
+      bFloor.addColorStop(0.5, 'rgba(29,78,216,0.08)');
+      bFloor.addColorStop(1,   'transparent');
+      ctx!.fillStyle = bFloor;
+      ctx!.fillRect(cx - 300, H - 80, 600, 80);
+      ctx!.restore();
+    }
+
+    function draw() {
+      ctx!.clearRect(0, 0, W, H);
+
+      // opacidade baseada no tema
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      ctx!.globalAlpha = isLight ? 0.18 : 0.75;
+
+      drawBeam();
+
+      // partículas
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x  += p.vx;
+        p.y  += p.vy;
+        p.life++;
+
+        const ratio = p.life / p.maxLife;
+        const alpha = p.op * (1 - ratio * ratio);
+
+        ctx!.save();
+        ctx!.globalAlpha *= alpha;
+        ctx!.shadowColor = '#60a5fa';
+        ctx!.shadowBlur  = p.isStreak ? 6 : 10;
+        ctx!.fillStyle   = P_COLORS[Math.floor(Math.random() * P_COLORS.length)];
+
+        if (p.isStreak) {
+          // rastro alongado
+          ctx!.beginPath();
+          ctx!.moveTo(p.x, p.y);
+          ctx!.lineTo(p.x + p.vx * 2, p.y - p.vy * 4);
+          ctx!.lineWidth   = p.size;
+          ctx!.strokeStyle = '#93c5fd';
+          ctx!.stroke();
+        } else {
+          ctx!.beginPath();
+          ctx!.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx!.fill();
+        }
+        ctx!.restore();
+
+        if (p.life >= p.maxLife || p.y > H + 10) {
+          particles.splice(i, 1);
+        }
+      }
+
+      // repõe partículas
+      const target = 120;
+      const toSpawn = Math.min(4, target - particles.length);
+      for (let i = 0; i < toSpawn; i++) spawn();
+
+      raf = requestAnimationFrame(draw);
+    }
+
+    draw();
+  })();
+
+  // ── Theme toggle ──
+  const html = document.documentElement;
+  const btn  = document.getElementById('theme-toggle');
+  const saved = localStorage.getItem('theme');
+  if (saved) html.setAttribute('data-theme', saved);
+
+  btn?.addEventListener('click', () => {
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+
+  // ── Char reveal ──
+  function splitChars(el: HTMLElement) {
+    const text = el.textContent || '';
+    el.innerHTML = text.split('').map(c =>
+      c === ' ' ? ' ' : `<span class="char">${c}</span>`
+    ).join('');
+  }
+  function revealChars(el: HTMLElement, delay = 0) {
+    el.querySelectorAll<HTMLElement>('.char').forEach((ch, i) => {
+      setTimeout(() => ch.classList.add('revealed'), delay + i * 30);
+    });
+  }
+  const l1 = document.getElementById('hero-line1');
+  const l2 = document.getElementById('hero-line2');
+  if (l1) { splitChars(l1); revealChars(l1, 200); }
+  if (l2) { splitChars(l2); revealChars(l2, 600); }
+
+  // ── Scroll fade-in ──
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll<HTMLElement>('.fade-up').forEach(el => io.observe(el));
+
+  // ── Parallax ──
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    document.querySelectorAll<HTMLElement>('.parallax-slow').forEach(el => { el.style.transform = `translateY(${y * 0.15}px)`; });
+    document.querySelectorAll<HTMLElement>('.parallax-med').forEach(el  => { el.style.transform = `translateY(${y * 0.08}px)`; });
+  }, { passive: true });
+
+  // ── Flashlight ──
+  document.querySelectorAll<HTMLElement>('.flash-card').forEach(card => {
+    card.addEventListener('mousemove', (e: MouseEvent) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      card.style.setProperty('--my', `${e.clientY - r.top}px`);
+    });
+  });
+
+  // ── GitHub Releases ──
+  async function loadRelease() {
+    try {
+      const res = await fetch('https://api.github.com/repos/pierre-santos013/iac/releases/latest');
+      if (!res.ok) return;
+      const { tag_name, assets } = await res.json() as {
+        tag_name: string;
+        assets: { name: string; browser_download_url: string }[];
+      };
+      const badge = document.getElementById('version-badge');
+      if (badge) badge.textContent = tag_name;
+      const setup    = assets.find(a => a.name.includes('Setup') && a.name.endsWith('.exe'));
+      const portable = assets.find(a => !a.name.includes('Setup') && a.name.endsWith('.exe') && !a.name.endsWith('.blockmap'));
+      const dlBtn    = document.getElementById('download-btn') as HTMLAnchorElement | null;
+      const dlLabel  = document.getElementById('download-label');
+      if (dlBtn && setup) { dlBtn.href = setup.browser_download_url; if (dlLabel) dlLabel.textContent = `Baixar ${setup.name}`; }
+      const portLink = document.getElementById('portable-link') as HTMLAnchorElement | null;
+      if (portLink && portable) portLink.href = portable.browser_download_url;
+    } catch { /* fallback */ }
+  }
+  loadRelease();
+</script>
+
+</body>
 </html>
