@@ -1,0 +1,42 @@
+---
+const features = [
+  {
+    icon: "📁",
+    title: "Acesso ao filesystem",
+    description: "Leia, crie e edite arquivos diretamente. A IA navega pelo seu projeto e faz alterações precisas com confirmação."
+  },
+  {
+    icon: "💻",
+    title: "Terminal integrado",
+    description: "Execute comandos shell, scripts e pipelines sem sair da conversa. Suporte a Bash e PowerShell."
+  },
+  {
+    icon: "🌐",
+    title: "Busca na web",
+    description: "Pesquise no DuckDuckGo e acesse URLs com conversão automática para Markdown. Informações em tempo real."
+  },
+  {
+    icon: "🔌",
+    title: "Multi-provider",
+    description: "Compatível com Claude (Anthropic), GPT (OpenAI) e qualquer modelo local via Ollama — incluindo modelos na nuvem."
+  }
+];
+---
+<section id="features" class="py-20 px-6 bg-gray-50">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-14">
+      <h2 class="text-3xl font-bold text-gray-950 tracking-tight mb-3">Tudo que você precisa, em um só lugar</h2>
+      <p class="text-gray-500 text-lg">Ferramentas poderosas acessíveis por linguagem natural.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {features.map((f) => (
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 hover:border-indigo-100 hover:shadow-md hover:shadow-indigo-50 transition-all">
+          <div class="text-3xl mb-4">{f.icon}</div>
+          <h3 class="font-semibold text-gray-900 mb-2 text-sm">{f.title}</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">{f.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

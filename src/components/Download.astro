@@ -1,0 +1,102 @@
+---
+---
+<section id="download" class="py-20 px-6 bg-white">
+  <div class="max-w-3xl mx-auto text-center">
+    <h2 class="text-3xl font-bold text-gray-950 tracking-tight mb-3">Pronto para começar?</h2>
+    <p class="text-gray-500 text-lg mb-12">Instale em menos de dois minutos. Sem assinatura, sem conta obrigatória.</p>
+
+    <!-- Download card -->
+    <div class="bg-gray-950 rounded-2xl p-8 mb-10 text-left">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-white font-semibold">Local AI Assistant</span>
+            <span id="version-badge" class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-mono">
+              carregando...
+            </span>
+          </div>
+          <p class="text-gray-400 text-sm">Windows 10 / 11 &middot; 64-bit &middot; Instalador NSIS</p>
+        </div>
+        <svg class="w-8 h-8 text-gray-600" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
+        </svg>
+      </div>
+
+      <a
+        id="download-btn"
+        href="#"
+        class="flex items-center justify-center gap-2.5 w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition-colors text-sm mb-3"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+        <span id="download-label">Baixar instalador (.exe)</span>
+      </a>
+
+      <p class="text-center text-xs text-gray-600">
+        Também disponível:
+        <a id="portable-link" href="https://github.com/pierre-santos013/iac/releases/latest" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white underline underline-offset-2 transition-colors">versão portable</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://github.com/pierre-santos013/iac/releases" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white underline underline-offset-2 transition-colors">todas as versões</a>
+      </p>
+    </div>
+
+    <!-- Steps -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+      {[
+        { step: "1", title: "Baixe o instalador", desc: "Clique no botão acima para baixar o arquivo .exe." },
+        { step: "2", title: "Execute e instale", desc: "Abra o instalador e siga as instruções. Leva menos de 1 minuto." },
+        { step: "3", title: "Configure e use", desc: "Insira sua chave de API ou configure o Ollama local e comece a conversar." },
+      ].map(({ step, title, desc }) => (
+        <div class="text-left">
+          <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 font-bold text-sm flex items-center justify-center mb-3">{step}</div>
+          <h4 class="font-semibold text-gray-900 text-sm mb-1">{title}</h4>
+          <p class="text-gray-500 text-sm leading-relaxed">{desc}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Requirements -->
+    <div class="border border-gray-100 rounded-xl p-5 text-left">
+      <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Requisitos</h4>
+      <ul class="space-y-1.5 text-sm text-gray-600">
+        <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Windows 10 ou 11 (64-bit)</li>
+        <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Conexão com internet (para APIs externas)</li>
+        <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Chave de API: Anthropic, OpenAI — ou Ollama local (gratuito)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  async function loadRelease() {
+    try {
+      const res = await fetch('https://api.github.com/repos/pierre-santos013/iac/releases/latest');
+      if (!res.ok) return;
+      const data = await res.json();
+      const { tag_name, assets } = data as { tag_name: string; assets: { name: string; browser_download_url: string }[] };
+
+      const setupExe = assets.find(a => a.name.includes('Setup') && a.name.endsWith('.exe'));
+      const portableExe = assets.find(a => !a.name.includes('Setup') && a.name.endsWith('.exe') && !a.name.endsWith('.blockmap'));
+
+      const badge = document.getElementById('version-badge');
+      if (badge) badge.textContent = tag_name;
+
+      const btn = document.getElementById('download-btn') as HTMLAnchorElement | null;
+      const label = document.getElementById('download-label');
+      if (btn && setupExe) {
+        btn.href = setupExe.browser_download_url;
+        if (label) label.textContent = `Baixar ${setupExe.name}`;
+      }
+
+      const portableLink = document.getElementById('portable-link') as HTMLAnchorElement | null;
+      if (portableLink && portableExe) {
+        portableLink.href = portableExe.browser_download_url;
+      }
+    } catch {
+      // fallback: links já apontam para /releases/latest
+    }
+  }
+
+  loadRelease();
+</script>
