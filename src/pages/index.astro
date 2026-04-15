@@ -524,6 +524,10 @@
     let H = 0;
     let cx = 0;
     let raf = 0;
+    let t_anim = 0;
+    let burstTimer = 0;
+    let burstActive = 0;
+    let nextBurst = 120 + Math.random() * 180;
 
     const BEAM_COLORS = ['#93c5fd', '#60a5fa', '#38bdf8', '#3b82f6', '#1d4ed8', '#bfdbfe'];
 
@@ -562,19 +566,21 @@
     function spawnParticle(yOverride?: number) {
       const y = yOverride ?? Math.random() * H;
       const t = Math.min(1, y / Math.max(H, 1));
-      const sideSpread = 6 + t * (W * 0.22);
+      // concentrado no eixo — spread máx ±28px (era W*0.22)
+      const sideSpread = 3 + t * 28;
       const x = cx + (Math.random() * 2 - 1) * sideSpread;
       const distance = Math.abs(x - cx);
-      const proximity = 1 - Math.min(1, distance / (W * 0.25));
+      const proximity = 1 - Math.min(1, distance / 30);
 
       particles.push({
         x,
         y,
-        vx: (Math.random() * 2 - 1) * (0.25 + t * 1.7),
-        vy: 1.4 + Math.random() * 3.2 + t * 1.6,
-        size: 0.6 + proximity * 2.9 + Math.random() * 0.8,
+        // quase vertical — vx muito menor
+        vx: (Math.random() * 2 - 1) * (0.1 + t * 0.6),
+        vy: 1.8 + Math.random() * 3.5 + t * 1.2,
+        size: 0.7 + proximity * 2.2 + Math.random() * 0.6,
         life: 0,
-        maxLife: 65 + Math.random() * 95,
+        maxLife: 55 + Math.random() * 80,
         color: BEAM_COLORS[(Math.random() * BEAM_COLORS.length) | 0],
       });
     }
@@ -592,49 +598,53 @@
       });
     }
 
-    function drawBeamStructure() {
-      const columnHalf = Math.max(96, W * 0.09);
+    function drawBeamStructure(ta: number) {
+      // moduladores orgânicos — cada camada pulsa em frequência distinta
+      const breathe   = 0.85 + 0.15 * Math.sin(ta);               // lento, suave
+      const drift     = 0.88 + 0.12 * Math.sin(ta * 2.3 + 1.1);  // wide glow
+      const flicker   = 0.90 + 0.10 * Math.sin(ta * 3.7 + 0.5);  // mid tremula
+      const coreFlick = 0.80 + 0.20 * Math.sin(ta * 6.1 + 2.0);  // core pisca
 
-      // 1) outer aura: 480px total width, 9% opacity
+      // 1) outer aura animada
       const aura = ctx.createLinearGradient(cx - 240, 0, cx + 240, 0);
       aura.addColorStop(0, 'rgba(147,197,253,0)');
-      aura.addColorStop(0.5, 'rgba(147,197,253,0.09)');
+      aura.addColorStop(0.5, `rgba(147,197,253,${(0.09 * breathe).toFixed(3)})`);
       aura.addColorStop(1, 'rgba(147,197,253,0)');
       ctx.fillStyle = aura;
       ctx.fillRect(cx - 240, 0, 480, H);
 
-      // 2) wide glow: 200px width, 22% opacity
+      // 2) wide glow animado
       const wide = ctx.createLinearGradient(cx - 100, 0, cx + 100, 0);
       wide.addColorStop(0, 'rgba(96,165,250,0)');
-      wide.addColorStop(0.5, 'rgba(96,165,250,0.22)');
+      wide.addColorStop(0.5, `rgba(96,165,250,${(0.22 * drift).toFixed(3)})`);
       wide.addColorStop(1, 'rgba(96,165,250,0)');
       ctx.fillStyle = wide;
       ctx.fillRect(cx - 100, 0, 200, H);
 
-      // 3) mid glow: 60px width, 55% opacity
+      // 3) mid glow — tremula mais rápido
       const mid = ctx.createLinearGradient(cx - 30, 0, cx + 30, 0);
       mid.addColorStop(0, 'rgba(56,189,248,0)');
-      mid.addColorStop(0.5, 'rgba(56,189,248,0.55)');
+      mid.addColorStop(0.5, `rgba(56,189,248,${(0.55 * flicker).toFixed(3)})`);
       mid.addColorStop(1, 'rgba(56,189,248,0)');
       ctx.fillStyle = mid;
       ctx.fillRect(cx - 30, 0, 60, H);
 
-      // 4) core: 4px nítido + shadowBlur duplo para intensidade
+      // 4) core piscando levemente
       ctx.save();
       ctx.shadowColor = '#e0f2fe';
       ctx.shadowBlur = 20;
       const core = ctx.createLinearGradient(cx - 2, 0, cx + 2, 0);
       core.addColorStop(0, 'rgba(224,242,254,0)');
-      core.addColorStop(0.5, 'rgba(224,242,254,1)');
+      core.addColorStop(0.5, `rgba(224,242,254,${coreFlick.toFixed(3)})`);
       core.addColorStop(1, 'rgba(224,242,254,0)');
       ctx.fillStyle = core;
       ctx.fillRect(cx - 2, 0, 4, H);
       ctx.restore();
-      // segundo passe do core com blur maior para halo
+      // halo do core
       ctx.save();
       ctx.shadowColor = '#60a5fa';
       ctx.shadowBlur = 55;
-      ctx.globalAlpha *= 0.7;
+      ctx.globalAlpha *= 0.7 * flicker;
       ctx.fillStyle = 'rgba(96,165,250,0.9)';
       ctx.fillRect(cx - 2, 0, 4, H);
       ctx.restore();
@@ -676,11 +686,12 @@
     function render() {
       ctx.clearRect(0, 0, W, H);
 
+      t_anim += 0.012;
       const isLight = document.documentElement.getAttribute('data-theme') === 'light';
       const baseAlpha = isLight ? 0.15 : 0.95;
       ctx.globalAlpha = baseAlpha;
 
-      drawBeamStructure();
+      drawBeamStructure(t_anim);
 
       // Dense particles (200+) flowing down and spreading sideways
       for (let i = particles.length - 1; i >= 0; i--) {
@@ -700,32 +711,42 @@
           continue;
         }
 
-        // traço nítido orientado pela velocidade
+        // traço orientado pela velocidade
         const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
         const nx = p.vx / spd, ny = p.vy / spd;
-        const len = 6 + spd * 2.2 + p.size * 2.5;
+        const len = 7 + spd * 2.0 + p.size * 2.2;
         const ex = p.x - nx * len;
         const ey = p.y - ny * len;
 
         ctx.save();
         ctx.globalAlpha = baseAlpha * alpha;
         ctx.lineCap = 'round';
-        // corpo do traço
         ctx.strokeStyle = p.color;
         ctx.lineWidth = Math.max(0.8, p.size * 0.5);
         ctx.shadowColor = p.color;
         ctx.shadowBlur = 4;
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
-        ctx.lineTo(ex, ey);
+
+        // perspectiva na base: streaks curvam para fora do eixo (vanishing point)
+        const depthFactor = Math.min(1, p.y / Math.max(H, 1));
+        if (depthFactor > 0.65 && Math.abs(p.x - cx) > 2) {
+          const side = Math.sign(p.x - cx);
+          const curve = side * depthFactor * 6;
+          const midX = p.x - nx * len * 0.5 + curve;
+          const midY = p.y - ny * len * 0.5;
+          ctx.quadraticCurveTo(midX, midY, ex + curve * 1.5, ey);
+        } else {
+          ctx.lineTo(ex, ey);
+        }
         ctx.stroke();
-        // ponta brilhante (head)
+        // ponta brilhante
         ctx.shadowBlur = 0;
         ctx.strokeStyle = '#e0f2fe';
         ctx.lineWidth = Math.max(0.6, p.size * 0.3);
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
-        ctx.lineTo(p.x - nx * len * 0.25, p.y - ny * len * 0.25);
+        ctx.lineTo(p.x - nx * len * 0.2, p.y - ny * len * 0.2);
         ctx.stroke();
         ctx.restore();
       }
@@ -763,6 +784,18 @@
         ctx.lineTo(s.x, s.y - s.len * 0.3);
         ctx.stroke();
         ctx.restore();
+      }
+
+      // burst periódico de dados
+      burstTimer++;
+      if (burstTimer >= nextBurst) {
+        burstActive = 25 + Math.random() * 20;
+        burstTimer = 0;
+        nextBurst = 120 + Math.random() * 240;
+      }
+      if (burstActive > 0) {
+        burstActive--;
+        for (let b = 0; b < 8 + Math.floor(Math.random() * 5); b++) spawnStreak();
       }
 
       const particleTarget = 300;
