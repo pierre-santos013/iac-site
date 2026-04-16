@@ -420,6 +420,10 @@
       { icon:"💻", title:"Terminal",   desc:"Execute comandos Bash e PowerShell sem sair da conversa. Timeout configurável." },
       { icon:"🌐", title:"Web & busca",desc:"Pesquise no DuckDuckGo e acesse URLs com conversão automática para Markdown." },
       { icon:"🔌", title:"Multi-provider",desc:"Claude, GPT, ou qualquer modelo local via Ollama — sem lock-in de plataforma." },
+      { icon:"🧩", title:"MCP",        desc:"Conecte servidores MCP externos. Importe diretamente do Claude Desktop com um clique." },
+      { icon:"⚡", title:"Skills",     desc:"Atalhos de prompt e skills com execução de comandos inline — escreva /commit e pronto." },
+      { icon:"🖥️", title:"Multi-sessão",desc:"Arraste conversas da sidebar para abrir lado a lado. Abas para cada conversa secundária." },
+      { icon:"📊", title:"Atividade em tempo real",desc:"Painel lateral com logs de tools, permissões não-bloqueantes e saída de subagents ao vivo." },
     ].map(({ icon, title, desc }, i) => (
       <div class="flash-card fade-up" style={`padding:28px;transition-delay:${i * 0.1}s;`}>
         <div style="font-size:28px;margin-bottom:16px;">{icon}</div>
@@ -529,7 +533,9 @@
     let burstActive = 0;
     let nextBurst = 120 + Math.random() * 180;
 
-    const BEAM_COLORS = ['#93c5fd', '#60a5fa', '#38bdf8', '#3b82f6', '#1d4ed8', '#bfdbfe'];
+    const BEAM_COLORS_DARK  = ['#93c5fd', '#60a5fa', '#38bdf8', '#3b82f6', '#1d4ed8', '#bfdbfe'];
+    const BEAM_COLORS_LIGHT = ['#fdba74', '#fb923c', '#f97316', '#ea580c', '#c2410c', '#fed7aa'];
+    let BEAM_COLORS = BEAM_COLORS_DARK;
 
     interface Particle {
       x: number;
@@ -598,50 +604,77 @@
       });
     }
 
-    function drawBeamStructure(ta: number) {
+    function drawBeamStructure(ta: number, light: boolean) {
       const breathe   = 0.82 + 0.18 * Math.sin(ta);
       const drift     = 0.85 + 0.15 * Math.sin(ta * 2.3 + 1.1);
       const flicker   = 0.88 + 0.12 * Math.sin(ta * 3.7 + 0.5);
       const coreFlick = 0.78 + 0.22 * Math.sin(ta * 6.1 + 2.0);
 
+      // paletas — dark: azul | light: laranja/âmbar (referência)
+      const C = light ? {
+        auraRgb:  '180,70,10',  auraOp:  0.16,
+        wideRgb:  '234,88,12',  wideOp:  0.50,
+        innerRgb: '251,146,60', innerOp: 0.75,
+        haloClr:  '#fed7aa',    haloBlur: 90,
+        coreClr:  '#fff7ed',    coreBlur: 28,
+        topRgb1:  '253,186,116', topRgb2: '249,115,22', topRgb3: '194,65,12',
+        baseRgb1: '253,186,116', baseRgb2: '249,115,22', baseRgb3: '194,65,12',
+        floorRgb1:'253,186,116', floorRgb2:'249,115,22', floorRgb3:'194,65,12',
+        floorShadow:'rgba(249,115,22,0.5)',
+        zero:     '66,20,0',
+      } : {
+        auraRgb:  '29,78,216',  auraOp:  0.28,
+        wideRgb:  '59,130,246', wideOp:  0.55,
+        innerRgb: '56,189,248', innerOp: 0.80,
+        haloClr:  '#bae6fd',    haloBlur: 90,
+        coreClr:  '#e0f2fe',    coreBlur: 28,
+        topRgb1:  '186,230,253', topRgb2: '99,162,247', topRgb3: '59,130,246',
+        baseRgb1: '125,211,252', baseRgb2: '96,165,250', baseRgb3: '59,130,246',
+        floorRgb1:'186,230,253', floorRgb2:'96,165,250', floorRgb3:'29,78,216',
+        floorShadow:'rgba(56,189,248,0.5)',
+        zero:     '15,23,66',
+      };
+
       // 1) outer aura
       const aura = ctx.createLinearGradient(cx - 300, 0, cx + 300, 0);
-      aura.addColorStop(0,   'rgba(15,23,66,0)');
-      aura.addColorStop(0.4, `rgba(29,78,216,${(0.18 * breathe).toFixed(3)})`);
-      aura.addColorStop(0.5, `rgba(29,78,216,${(0.28 * breathe).toFixed(3)})`);
-      aura.addColorStop(0.6, `rgba(29,78,216,${(0.18 * breathe).toFixed(3)})`);
-      aura.addColorStop(1,   'rgba(15,23,66,0)');
+      aura.addColorStop(0,   `rgba(${C.zero},0)`);
+      aura.addColorStop(0.4, `rgba(${C.auraRgb},${(C.auraOp * 0.65 * breathe).toFixed(3)})`);
+      aura.addColorStop(0.5, `rgba(${C.auraRgb},${(C.auraOp * breathe).toFixed(3)})`);
+      aura.addColorStop(0.6, `rgba(${C.auraRgb},${(C.auraOp * 0.65 * breathe).toFixed(3)})`);
+      aura.addColorStop(1,   `rgba(${C.zero},0)`);
       ctx.fillStyle = aura;
       ctx.fillRect(cx - 300, 0, 600, H);
 
       // 2) mid glow
       const wide = ctx.createLinearGradient(cx - 120, 0, cx + 120, 0);
-      wide.addColorStop(0,   'rgba(37,99,235,0)');
-      wide.addColorStop(0.5, `rgba(59,130,246,${(0.55 * drift).toFixed(3)})`);
-      wide.addColorStop(1,   'rgba(37,99,235,0)');
+      wide.addColorStop(0,   `rgba(${C.wideRgb},0)`);
+      wide.addColorStop(0.5, `rgba(${C.wideRgb},${(C.wideOp * drift).toFixed(3)})`);
+      wide.addColorStop(1,   `rgba(${C.wideRgb},0)`);
       ctx.fillStyle = wide;
       ctx.fillRect(cx - 120, 0, 240, H);
 
       // 3) inner glow
       const inner = ctx.createLinearGradient(cx - 40, 0, cx + 40, 0);
-      inner.addColorStop(0,   'rgba(56,189,248,0)');
-      inner.addColorStop(0.5, `rgba(56,189,248,${(0.80 * flicker).toFixed(3)})`);
-      inner.addColorStop(1,   'rgba(56,189,248,0)');
+      inner.addColorStop(0,   `rgba(${C.innerRgb},0)`);
+      inner.addColorStop(0.5, `rgba(${C.innerRgb},${(C.innerOp * flicker).toFixed(3)})`);
+      inner.addColorStop(1,   `rgba(${C.innerRgb},0)`);
       ctx.fillStyle = inner;
       ctx.fillRect(cx - 40, 0, 80, H);
 
       // 4) core — halo difuso
       ctx.save();
-      ctx.shadowColor = '#bae6fd';
-      ctx.shadowBlur  = 90;
+      ctx.shadowColor = C.haloClr;
+      ctx.shadowBlur  = C.haloBlur;
       ctx.globalAlpha *= 0.75 * flicker;
-      ctx.fillStyle   = `rgba(186,230,253,${(0.75 * coreFlick).toFixed(3)})`;
+      ctx.fillStyle   = C.haloClr.replace(')', `,${(0.75 * coreFlick).toFixed(3)})`).replace('#', 'rgba(').replace(/([0-9a-f]{2})/gi, (m) => parseInt(m,16)+',').slice(0,-1) || C.haloClr;
+      // simplificado: usa fillStyle direto com globalAlpha
+      ctx.fillStyle = C.haloClr;
       ctx.fillRect(cx - 7, 0, 14, H);
       ctx.restore();
-      // fio nítido branco
+      // fio nítido
       ctx.save();
-      ctx.shadowColor = '#e0f2fe';
-      ctx.shadowBlur  = 28;
+      ctx.shadowColor = C.coreClr;
+      ctx.shadowBlur  = C.coreBlur;
       const core = ctx.createLinearGradient(cx - 2, 0, cx + 2, 0);
       core.addColorStop(0,   'rgba(255,255,255,0)');
       core.addColorStop(0.5, `rgba(255,255,255,${coreFlick.toFixed(3)})`);
@@ -657,26 +690,24 @@
       ctx.fillRect(cx - 0.5, 0, 1, H);
       ctx.restore();
 
-      // top bloom — bordas suaves com muitos stops
+      // top bloom
       ctx.save();
       const topBloom = ctx.createRadialGradient(cx, 0, 0, cx, 0, 180);
-      topBloom.addColorStop(0,    `rgba(186,230,253,${(0.45 * breathe).toFixed(3)})`);
-      topBloom.addColorStop(0.25, `rgba(99,162,247,${(0.28 * breathe).toFixed(3)})`);
-      topBloom.addColorStop(0.55, `rgba(59,130,246,${(0.12 * breathe).toFixed(3)})`);
-      topBloom.addColorStop(0.80, `rgba(29,78,216,${(0.04 * breathe).toFixed(3)})`);
-      topBloom.addColorStop(1,    'rgba(15,23,66,0)');
+      topBloom.addColorStop(0,    `rgba(${C.topRgb1},${(0.45 * breathe).toFixed(3)})`);
+      topBloom.addColorStop(0.25, `rgba(${C.topRgb2},${(0.28 * breathe).toFixed(3)})`);
+      topBloom.addColorStop(0.55, `rgba(${C.topRgb3},${(0.12 * breathe).toFixed(3)})`);
+      topBloom.addColorStop(1,    `rgba(${C.zero},0)`);
       ctx.fillStyle = topBloom;
       ctx.fillRect(cx - 180, 0, 360, 180);
       ctx.restore();
 
-      // base bloom — bordas suaves
+      // base bloom
       ctx.save();
       const baseBloom = ctx.createRadialGradient(cx, H, 0, cx, H, 260);
-      baseBloom.addColorStop(0,    `rgba(125,211,252,${(0.55 * breathe).toFixed(3)})`);
-      baseBloom.addColorStop(0.20, `rgba(96,165,250,${(0.32 * breathe).toFixed(3)})`);
-      baseBloom.addColorStop(0.50, `rgba(59,130,246,${(0.14 * breathe).toFixed(3)})`);
-      baseBloom.addColorStop(0.80, `rgba(29,78,216,${(0.05 * breathe).toFixed(3)})`);
-      baseBloom.addColorStop(1,    'rgba(15,23,66,0)');
+      baseBloom.addColorStop(0,    `rgba(${C.baseRgb1},${(0.55 * breathe).toFixed(3)})`);
+      baseBloom.addColorStop(0.20, `rgba(${C.baseRgb2},${(0.32 * breathe).toFixed(3)})`);
+      baseBloom.addColorStop(0.50, `rgba(${C.baseRgb3},${(0.14 * breathe).toFixed(3)})`);
+      baseBloom.addColorStop(1,    `rgba(${C.zero},0)`);
       ctx.fillStyle = baseBloom;
       ctx.fillRect(cx - 260, H - 260, 520, 260);
       ctx.restore();
@@ -685,13 +716,13 @@
       ctx.save();
       ctx.translate(cx, H - 8);
       ctx.scale(1, 0.14);
-      ctx.shadowColor = 'rgba(56,189,248,0.5)';
+      ctx.shadowColor = C.floorShadow;
       ctx.shadowBlur  = 80;
       const floor = ctx.createRadialGradient(0, 0, 0, 0, 0, 420);
-      floor.addColorStop(0,   `rgba(186,230,253,${(0.45 * drift).toFixed(3)})`);
-      floor.addColorStop(0.3, `rgba(96,165,250,${(0.25 * drift).toFixed(3)})`);
-      floor.addColorStop(0.7, `rgba(29,78,216,${(0.10 * drift).toFixed(3)})`);
-      floor.addColorStop(1,   'rgba(15,23,66,0)');
+      floor.addColorStop(0,   `rgba(${C.floorRgb1},${(0.45 * drift).toFixed(3)})`);
+      floor.addColorStop(0.3, `rgba(${C.floorRgb2},${(0.25 * drift).toFixed(3)})`);
+      floor.addColorStop(0.7, `rgba(${C.floorRgb3},${(0.10 * drift).toFixed(3)})`);
+      floor.addColorStop(1,   `rgba(${C.zero},0)`);
       ctx.fillStyle = floor;
       ctx.beginPath();
       ctx.arc(0, 0, 420, 0, Math.PI * 2);
@@ -704,10 +735,11 @@
 
       t_anim += 0.012;
       const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      const baseAlpha = isLight ? 0.15 : 0.95;
+      BEAM_COLORS = isLight ? BEAM_COLORS_LIGHT : BEAM_COLORS_DARK;
+      const baseAlpha = isLight ? 0.65 : 0.95;
       ctx.globalAlpha = baseAlpha;
 
-      drawBeamStructure(t_anim);
+      drawBeamStructure(t_anim, isLight);
 
       // Dense particles (200+) flowing down and spreading sideways
       for (let i = particles.length - 1; i >= 0; i--) {
@@ -772,16 +804,16 @@
         ctx.globalAlpha = baseAlpha * alpha;
         ctx.lineCap = 'round';
         // corpo
-        ctx.strokeStyle = '#93c5fd';
+        ctx.strokeStyle = isLight ? '#fb923c' : '#93c5fd';
         ctx.lineWidth = 1.5;
-        ctx.shadowColor = '#60a5fa';
+        ctx.shadowColor = isLight ? '#f97316' : '#60a5fa';
         ctx.shadowBlur = 8;
         ctx.beginPath();
         ctx.moveTo(s.x, s.y);
         ctx.lineTo(s.x, s.y - s.len);
         ctx.stroke();
-        // ponta branca
-        ctx.strokeStyle = '#f0f9ff';
+        // ponta brilhante
+        ctx.strokeStyle = isLight ? '#fff7ed' : '#f0f9ff';
         ctx.lineWidth = 1;
         ctx.shadowBlur = 0;
         ctx.beginPath();
