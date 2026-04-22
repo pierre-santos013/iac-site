@@ -33,12 +33,18 @@
         <span id="download-label">Baixar instalador (.exe)</span>
       </a>
 
-      <p class="text-center text-xs text-gray-600">
-        Também disponível:
-        <a id="portable-link" href="https://github.com/pierre-santos013/iac/releases/latest" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white underline underline-offset-2 transition-colors">versão portable</a>
-        &nbsp;&middot;&nbsp;
+      <div class="flex items-center justify-center gap-4 text-xs text-gray-600">
+        <!-- CLI terminal download -->
+        <a id="cli-link" href="https://github.com/pierre-santos013/iac/releases/latest" target="_blank" rel="noopener noreferrer"
+           class="flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors underline underline-offset-2">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span id="cli-label">lai.exe — CLI terminal</span>
+        </a>
+        <span class="text-gray-700">&middot;</span>
         <a href="https://github.com/pierre-santos013/iac/releases" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white underline underline-offset-2 transition-colors">todas as versões</a>
-      </p>
+      </div>
     </div>
 
     <!-- Steps -->
@@ -63,6 +69,7 @@
         <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Windows 10 ou 11 (64-bit)</li>
         <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Conexão com internet (para APIs externas)</li>
         <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Chave de API: Anthropic, OpenAI — ou Ollama local (gratuito)</li>
+        <li class="flex items-center gap-2"><span class="text-indigo-400">›</span> <span>CLI terminal (<code class="font-mono text-xs bg-gray-100 px-1 rounded">lai.exe</code>): sem instalação, basta baixar e executar</span></li>
       </ul>
     </div>
   </div>
@@ -77,7 +84,7 @@
       const { tag_name, assets } = data as { tag_name: string; assets: { name: string; browser_download_url: string }[] };
 
       const setupExe = assets.find(a => a.name.includes('Setup') && a.name.endsWith('.exe'));
-      const portableExe = assets.find(a => !a.name.includes('Setup') && a.name.endsWith('.exe') && !a.name.endsWith('.blockmap'));
+      const cliExe = assets.find(a => a.name === 'lai.exe');
 
       const badge = document.getElementById('version-badge');
       if (badge) badge.textContent = tag_name;
@@ -89,9 +96,11 @@
         if (label) label.textContent = `Baixar ${setupExe.name}`;
       }
 
-      const portableLink = document.getElementById('portable-link') as HTMLAnchorElement | null;
-      if (portableLink && portableExe) {
-        portableLink.href = portableExe.browser_download_url;
+      const cliLink = document.getElementById('cli-link') as HTMLAnchorElement | null;
+      const cliLabel = document.getElementById('cli-label');
+      if (cliLink && cliExe) {
+        cliLink.href = cliExe.browser_download_url;
+        if (cliLabel) cliLabel.textContent = `lai.exe — CLI terminal (${tag_name})`;
       }
     } catch {
       // fallback: links já apontam para /releases/latest
