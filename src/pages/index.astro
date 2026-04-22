@@ -426,6 +426,9 @@
       { icon:"📊", title:"Atividade em tempo real",desc:"Painel lateral com logs de tools, permissões não-bloqueantes e saída de subagents ao vivo." },
       { icon:"🖼️", title:"Preview de apps HTML",desc:"Visualize apps HTML gerados pelo assistente direto no chat — painel iframe com botão para abrir em nova aba." },
       { icon:"🐙", title:"GitHub",      desc:"Leia arquivos, abra PRs e issues, comente em repositórios — tudo por linguagem natural." },
+      { icon:"🤝", title:"Agentes delegados", desc:"Delegue tarefas ao Claude Sonnet ou Codex como subagentes. O modelo principal orquestra, os especialistas executam." },
+      { icon:"🖥️", title:"Painel de agentes", desc:"Visualize Claude e Codex trabalhando em tempo real. Terminal streaming por agente, histórico de delegações da sessão." },
+      { icon:"📦", title:"Artefatos melhorados", desc:"Modal full-screen, preview de Markdown, download direto e abertura no navegador para arquivos gerados." },
     ].map(({ icon, title, desc }, i) => (
       <div class="flash-card fade-up" style={`padding:28px;transition-delay:${i * 0.1}s;`}>
         <div style="font-size:28px;margin-bottom:16px;">{icon}</div>
@@ -467,7 +470,7 @@
 
     <p style="text-align:center;font-size:12px;color:var(--text-4);transition:color 0.35s;">
       Também disponível:&nbsp;
-      <a id="portable-link" href="https://github.com/pierre-santos013/iac-site/releases/latest" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">versão portable</a>
+      <a id="cli-link" href="https://github.com/pierre-santos013/iac-site/releases/latest" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><span id="cli-label">lai.exe — CLI terminal</span></a>
       &nbsp;·&nbsp;
       <a href="https://github.com/pierre-santos013/iac-site/releases" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">todas as versões</a>
     </p>
@@ -509,7 +512,7 @@
       <span style="font-size:13px;color:var(--text-4);transition:color 0.35s;">Local AI Assistant</span>
     </div>
     <div style="display:flex;align-items:center;gap:20px;">
-      {[["GitHub","https://github.com/pierre-santos013/iac"],["Releases","https://github.com/pierre-santos013/iac/releases"],["Reportar bug","https://github.com/pierre-santos013/iac/issues"]].map(([label, url]) => (
+      {[["GitHub","https://github.com/pierre-santos013/iac"],["Releases","https://github.com/pierre-santos013/iac-site/releases"],["Reportar bug","https://github.com/pierre-santos013/iac/issues"]].map(([label, url]) => (
         <a href={url} target="_blank" rel="noopener noreferrer"
           style="font-size:13px;color:var(--text-4);text-decoration:none;transition:color 0.2s;"
           onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-4)'">{label}</a>
@@ -914,13 +917,14 @@
       };
       const badge = document.getElementById('version-badge');
       if (badge) badge.textContent = tag_name;
-      const setup    = assets.find(a => a.name.includes('Setup') && a.name.endsWith('.exe'));
-      const portable = assets.find(a => !a.name.includes('Setup') && a.name.endsWith('.exe') && !a.name.endsWith('.blockmap'));
-      const dlBtn    = document.getElementById('download-btn') as HTMLAnchorElement | null;
-      const dlLabel  = document.getElementById('download-label');
+      const setup  = assets.find(a => a.name.includes('Setup') && a.name.endsWith('.exe'));
+      const cliExe = assets.find(a => a.name === 'lai.exe');
+      const dlBtn  = document.getElementById('download-btn') as HTMLAnchorElement | null;
+      const dlLabel = document.getElementById('download-label');
       if (dlBtn && setup) { dlBtn.href = setup.browser_download_url; if (dlLabel) dlLabel.textContent = `Baixar ${setup.name}`; }
-      const portLink = document.getElementById('portable-link') as HTMLAnchorElement | null;
-      if (portLink && portable) portLink.href = portable.browser_download_url;
+      const cliLink  = document.getElementById('cli-link') as HTMLAnchorElement | null;
+      const cliLabel = document.getElementById('cli-label');
+      if (cliLink && cliExe) { cliLink.href = cliExe.browser_download_url; if (cliLabel) cliLabel.textContent = `lai.exe — CLI terminal (${tag_name})`; }
     } catch { /* fallback */ }
   }
   loadRelease();
