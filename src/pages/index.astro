@@ -429,6 +429,11 @@
       { icon:"🤝", title:"Agentes delegados", desc:"Delegue tarefas ao Claude Sonnet ou Codex como subagentes. O modelo principal orquestra, os especialistas executam." },
       { icon:"🖥️", title:"Painel de agentes", desc:"Visualize Claude e Codex trabalhando em tempo real. Terminal streaming por agente, histórico de delegações da sessão." },
       { icon:"📦", title:"Artefatos melhorados", desc:"Modal full-screen, preview de Markdown, download direto e abertura no navegador para arquivos gerados." },
+      { icon:"📬", title:"Fila de mensagens",   desc:"Envie a próxima pergunta enquanto o modelo ainda responde. Ela entra na fila e é processada automaticamente ao final do turno." },
+      { icon:"💬", title:"BTW inject",          desc:"Use /btw para injetar uma nota mid-loop sem interromper o turno atual — o modelo lê entre as chamadas de tool." },
+      { icon:"🎯", title:"Contexto por mensagem", desc:"Inclua ou exclua mensagens individuais do histórico enviado ao modelo. Controle fino do contexto sem apagar mensagens." },
+      { icon:"📋", title:"RunTask em tempo real", desc:"Blocos de progresso inline para tarefas longas — veja cada etapa sendo executada com status ao vivo." },
+      { icon:"🕰️", title:"Histórico de arquivos", desc:"Snapshot automático antes de cada edição. Reverta arquivos para qualquer versão anterior diretamente pelo painel." },
     ].map(({ icon, title, desc }, i) => (
       <div class="flash-card fade-up" style={`padding:28px;transition-delay:${i * 0.1}s;`}>
         <div style="font-size:28px;margin-bottom:16px;">{icon}</div>
