@@ -78,7 +78,7 @@
 <script>
   async function loadRelease() {
     try {
-      const res = await fetch('https://api.github.com/repos/pierre-santos013/iac/releases/latest');
+      const res = await fetch('https://api.github.com/repos/pierre-santos013/iac-site/releases/latest');
       if (!res.ok) return;
       const data = await res.json();
       const { tag_name, assets } = data as { tag_name: string; assets: { name: string; browser_download_url: string }[] };
