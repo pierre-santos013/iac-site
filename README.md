@@ -1,6 +1,6 @@
 # iac-site
 
-Site de download do [Local AI Assistant](https://github.com/pierre-santos013/iac) — landing page estática servida via Docker.
+Site de download do [Arcora](https://github.com/pierre-santos013/iac) — landing page estática servida via Docker.
 
 ## Stack
 
@@ -36,7 +36,7 @@ Para disponibilizar uma nova versão:
 gh release create v0.X.X "caminho/Local-AI-Assistant-Setup-0.X.X.exe" \
   --repo pierre-santos013/iac-site \
   --title "v0.X.X" \
-  --notes "Local AI Assistant v0.X.X"
+  --notes "Arcora v0.X.X"
 ```
 
 > O repositório de código-fonte da aplicação (`pierre-santos013/iac`) é privado.
