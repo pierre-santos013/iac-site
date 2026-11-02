@@ -2,5 +2,6 @@ services:
   iac-site:
     build: .
     ports:
-      - "3009:3000"
+      # Only this machine: the public address comes through the Cloudflare tunnel.
+      - "127.0.0.1:3009:3000"
     restart: unless-stopped
