@@ -8,7 +8,9 @@
   <title>Arcora — IA local para Windows</title>
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <link rel="alternate icon" type="image/png" href="/favicon.png" />
-  <meta name="description" content="Assistente de IA local com acesso ao filesystem, terminal e web. Claude, OpenAI e Ollama." />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta name="theme-color" content="#0B1220" />
+  <meta name="description" content="Arcora: assistente de IA que roda no seu computador, com acesso a arquivos, terminal e web, equipes de agentes e controle pelo celular." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -331,16 +333,15 @@
 <header style="position:fixed;top:0;left:0;right:0;z-index:50;background:var(--bg-header);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-soft);transition:background 0.35s,border-color 0.35s;">
   <div style="max-width:1100px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;">
     <div style="display:flex;align-items:center;gap:10px;">
-      <span style="font-size:22px;">🤖</span>
-      <img src="/logo.svg" alt="" width="24" height="24" style="display:inline-block;vertical-align:middle;margin-right:8px" />
+      <img src="/logo.svg" alt="" width="28" height="28" style="display:inline-block;vertical-align:middle;border-radius:7px" />
       <span style="font-size:14px;font-weight:600;color:var(--text-1);letter-spacing:-0.02em;transition:color 0.35s;">Arcora</span>
     </div>
     <nav style="display:flex;align-items:center;gap:20px;">
       <a href="#features" style="font-size:13px;color:var(--text-3);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-3)'">Funcionalidades</a>
       <a href="#download" style="font-size:13px;color:var(--text-3);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-3)'">Download</a>
-      <a href="https://github.com/pierre-santos013/iac" target="_blank" rel="noopener noreferrer" style="font-size:13px;color:var(--text-3);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-3)'">
+      <a href="https://github.com/pierre-santos013/iac-site/releases" target="_blank" rel="noopener noreferrer" style="font-size:13px;color:var(--text-3);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-3)'">
         <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-        GitHub
+        Versões
       </a>
       <!-- TOGGLE -->
       <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema">
@@ -366,7 +367,7 @@
   <div style="position:relative;z-index:10;text-align:center;max-width:860px;padding:0 24px;">
     <div class="badge fade-up" style="margin-bottom:28px;">
       <span class="badge-dot"></span>
-      Gratuito &middot; Open source &middot; Windows
+      Gratuito &middot; Windows &middot; Controle pelo celular
     </div>
 
     <h1 style="font-size:clamp(42px,6vw,80px);font-weight:800;line-height:1.05;letter-spacing:-0.04em;color:var(--text-1);margin-bottom:24px;">
@@ -375,7 +376,7 @@
     </h1>
 
     <p class="fade-up" style="font-size:18px;color:var(--text-2);max-width:560px;margin:0 auto 40px;line-height:1.7;transition-delay:0.3s;transition:color 0.35s;">
-      Acesse arquivos, execute comandos no terminal e pesquise na web — tudo por linguagem natural. Compatível com Claude, OpenAI e Ollama.
+      Acesse arquivos, execute comandos no terminal e pesquise na web — tudo por linguagem natural. Monte equipes de agentes e acompanhe pelo celular. Compatível com ChatGPT/Codex, Claude, Gemini e Ollama.
     </p>
 
     <div class="fade-up" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;transition-delay:0.45s;">
@@ -384,8 +385,8 @@
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
         Baixar para Windows
       </a>
-      <a href="https://github.com/pierre-santos013/iac" target="_blank" rel="noopener noreferrer" class="btn-ghost">
-        Ver no GitHub
+      <a href="https://github.com/pierre-santos013/iac-site/releases" target="_blank" rel="noopener noreferrer" class="btn-ghost">
+        Ver novidades
       </a>
     </div>
 
@@ -419,6 +420,11 @@
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
     {[
+      { logo:"/logo-code.svg", title:"Arcora Code", desc:"Modo de programação por projeto: várias pastas, diffs de cada edição, worktrees, /review e /pr pela conversa." },
+      { icon:"👥", title:"Equipes de agentes", desc:"Coordenador, planejador, executor, revisor e testador trabalhando juntos. Você aprova o plano por botão antes de qualquer mudança." },
+      { icon:"📱", title:"Controle pelo celular", desc:"Pareie o celular por QR code, instale como app e acompanhe ou aprove tarefas de qualquer lugar." },
+      { icon:"🔔", title:"Notificações", desc:"Receba um aviso no celular quando uma tarefa longa termina ou quando o Arcora precisa de você." },
+      { icon:"🧭", title:"Navegador dos agentes", desc:"Os agentes testam sites num navegador próprio, e você acompanha cada clique ao vivo dentro do Arcora." },
       { icon:"📁", title:"Filesystem", desc:"Leia, crie e edite arquivos diretamente. Alterações com confirmação antes de executar." },
       { icon:"💻", title:"Terminal",   desc:"Execute comandos Bash e PowerShell sem sair da conversa. Timeout configurável." },
       { icon:"🌐", title:"Web & busca",desc:"Pesquise no DuckDuckGo e acesse URLs com conversão automática para Markdown." },
@@ -442,9 +448,11 @@
       { icon:"🎨", title:"Designer com URL pública",desc:"Publique projetos HTML do Designer como páginas públicas com URL compartilhável. Controle de colaboradores por projeto." },
       { icon:"🔑", title:"Gerenciamento de API keys",desc:"Salve chaves de API diretamente no banco — prioridade sobre variáveis de ambiente. Botão 'Testar' valida a conexão antes de usar." },
       { icon:"📊", title:"Modelos atualizados",    desc:"Suporte a GPT-5.5, GPT-5.4, gpt-4.1, o3, o4-mini, Gemini 3.x e todos os modelos mais recentes de cada provider." },
-    ].map(({ icon, title, desc }, i) => (
+    ].map(({ icon, logo, title, desc }: { icon?: string; logo?: string; title: string; desc: string }, i) => (
       <div class="flash-card fade-up" style={`padding:28px;transition-delay:${i * 0.1}s;`}>
-        <div style="font-size:28px;margin-bottom:16px;">{icon}</div>
+        {logo
+          ? <img src={logo} alt="" width="32" height="32" style="display:block;margin-bottom:16px;" />
+          : <div style="font-size:28px;margin-bottom:16px;">{icon}</div>}
         <h3 style="font-size:15px;font-weight:600;color:var(--text-1);margin-bottom:8px;transition:color 0.35s;">{title}</h3>
         <p style="font-size:13px;color:var(--text-3);line-height:1.65;transition:color 0.35s;">{desc}</p>
       </div>
@@ -467,7 +475,7 @@
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;">
       <div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-          <img src="/logo.svg" alt="" width="24" height="24" style="display:inline-block;vertical-align:middle;margin-right:8px" />
+          <img src="/logo.svg" alt="" width="28" height="28" style="display:inline-block;vertical-align:middle;border-radius:7px" />
           <span style="font-size:15px;font-weight:600;color:var(--text-1);transition:color 0.35s;">Arcora</span>
           <span id="version-badge" style="font-size:11px;padding:3px 8px;border-radius:9999px;background:var(--accent-dim);border:1px solid var(--accent-ring);color:var(--accent-text);font-family:monospace;transition:all 0.35s;">carregando...</span>
         </div>
@@ -484,7 +492,7 @@
 
     <p style="text-align:center;font-size:12px;color:var(--text-4);transition:color 0.35s;">
       Também disponível:&nbsp;
-      <a id="cli-link" href="https://github.com/pierre-santos013/iac-site/releases/latest" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><span id="cli-label">lai.exe — CLI terminal</span></a>
+      <a id="portable-link" href="https://github.com/pierre-santos013/iac-site/releases/latest" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><span id="portable-label">versão portátil (sem instalar)</span></a>
       &nbsp;·&nbsp;
       <a href="https://github.com/pierre-santos013/iac-site/releases" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">todas as versões</a>
     </p>
@@ -495,7 +503,7 @@
     {[
       { n:"1", t:"Baixe",     d:"Clique no botão e baixe o arquivo .exe." },
       { n:"2", t:"Instale",   d:"Execute o instalador e siga as instruções." },
-      { n:"3", t:"Configure", d:"Insira sua chave de API ou configure o Ollama." },
+      { n:"3", t:"Configure", d:"Entre com sua conta ChatGPT/Codex ou Claude, use uma chave de API ou o Ollama." },
     ].map(({ n, t, d }) => (
       <div style="text-align:left;">
         <div style="width:32px;height:32px;border-radius:8px;background:var(--accent-dim);border:1px solid var(--accent-ring);color:var(--accent);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;transition:all 0.35s;">{n}</div>
@@ -509,7 +517,7 @@
   <div class="fade-up" style="border:1px solid var(--border);border-radius:12px;padding:20px 24px;text-align:left;transition:border-color 0.35s;">
     <p style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-4);margin-bottom:14px;transition:color 0.35s;">Requisitos</p>
     <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
-      {["Windows 10 ou 11 (64-bit)","Conexão com internet (para APIs externas)","Chave de API Anthropic ou OpenAI — ou Ollama local (gratuito)"].map(r => (
+      {["Windows 10 ou 11 (64-bit)","Conexão com internet (para os modelos na nuvem)","Conta ChatGPT/Codex ou Claude, chave de API (OpenAI, Anthropic, Gemini) — ou Ollama local (gratuito)"].map(r => (
         <li style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--req-text);transition:color 0.35s;">
           <span style="color:#22c55e;font-size:14px;">✓</span> {r}
         </li>
@@ -522,12 +530,11 @@
 <footer style="border-top:1px solid var(--border-soft);padding:32px 24px;transition:border-color 0.35s;">
   <div style="max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;">
     <div style="display:flex;align-items:center;gap:8px;">
-      <span>🤖</span>
-      <img src="/logo.svg" alt="" width="24" height="24" style="display:inline-block;vertical-align:middle;margin-right:8px" />
+      <img src="/logo.svg" alt="" width="22" height="22" style="display:inline-block;vertical-align:middle;border-radius:6px" />
       <span style="font-size:13px;color:var(--text-4);transition:color 0.35s;">Arcora</span>
     </div>
     <div style="display:flex;align-items:center;gap:20px;">
-      {[["GitHub","https://github.com/pierre-santos013/iac"],["Releases","https://github.com/pierre-santos013/iac-site/releases"],["Reportar bug","https://github.com/pierre-santos013/iac/issues"]].map(([label, url]) => (
+      {[["Versões","https://github.com/pierre-santos013/iac-site/releases"],["Reportar bug","https://github.com/pierre-santos013/iac-site/issues"]].map(([label, url]) => (
         <a href={url} target="_blank" rel="noopener noreferrer"
           style="font-size:13px;color:var(--text-4);text-decoration:none;transition:color 0.2s;"
           onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-4)'">{label}</a>
@@ -932,14 +939,13 @@
       };
       const badge = document.getElementById('version-badge');
       if (badge) badge.textContent = tag_name;
-      const setup  = assets.find(a => a.name.includes('Setup') && a.name.endsWith('.exe'));
-      const cliExe = assets.find(a => a.name === 'lai.exe');
+      const setup    = assets.find(a => a.name.includes('Setup') && a.name.endsWith('.exe'));
+      const portable = assets.find(a => a.name.includes('portatil') && a.name.endsWith('.exe'));
       const dlBtn  = document.getElementById('download-btn') as HTMLAnchorElement | null;
       const dlLabel = document.getElementById('download-label');
       if (dlBtn && setup) { dlBtn.href = setup.browser_download_url; if (dlLabel) dlLabel.textContent = `Baixar ${setup.name}`; }
-      const cliLink  = document.getElementById('cli-link') as HTMLAnchorElement | null;
-      const cliLabel = document.getElementById('cli-label');
-      if (cliLink && cliExe) { cliLink.href = cliExe.browser_download_url; if (cliLabel) cliLabel.textContent = `lai.exe — CLI terminal (${tag_name})`; }
+      const portableLink = document.getElementById('portable-link') as HTMLAnchorElement | null;
+      if (portableLink && portable) portableLink.href = portable.browser_download_url;
     } catch { /* fallback */ }
   }
   loadRelease();
